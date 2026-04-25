@@ -64,13 +64,27 @@ export async function resizeImage(file: File, preset: ResizePreset): Promise<str
 
   const primary = canvas.toDataURL(preset.mime, preset.quality);
 
-  // For PNG preset, also try JPEG and pick the smaller one (when transparency isn't needed,
-  // JPEG can be much smaller). We accept JPEG if it's at least 25% smaller.
-  if (preset.mime === "image/png") {
+  // For PNG preset, also try JPEG and pick the smaller one — but ONLY if the canvas
+  // is fully opaque. JPEG fills transparent pixels with black, which silently turns
+  // a transparent-background logo into a black box on the recipient's screen.
+  if (preset.mime === "image/png" && isFullyOpaque(ctx, w, h)) {
     const jpeg = canvas.toDataURL("image/jpeg", 0.85);
     if (jpeg.length < primary.length * 0.75) return jpeg;
   }
   return primary;
+}
+
+function isFullyOpaque(ctx: CanvasRenderingContext2D, w: number, h: number): boolean {
+  try {
+    const { data } = ctx.getImageData(0, 0, w, h);
+    for (let i = 3; i < data.length; i += 4) {
+      if (data[i]! < 255) return false;
+    }
+    return true;
+  } catch {
+    // Cross-origin or other read failure — assume transparency to be safe.
+    return false;
+  }
 }
 
 export function byteSizeOfDataUrl(dataUrl: string): number {

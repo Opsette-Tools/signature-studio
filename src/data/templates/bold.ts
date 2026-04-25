@@ -4,6 +4,7 @@ import {
   fontStack,
   join,
   link,
+  logoImg,
   socialIconsRow,
   telLink,
 } from "@/utils/renderSignatureHtml";
@@ -50,7 +51,7 @@ const colorStripe: SignatureTemplate = {
     return `<div style="font-family:${fontStack};max-width:480px;">
       <div style="background:${accent};color:#fff;padding:12px 16px;border-radius:6px 6px 0 0;display:flex;align-items:center;justify-content:space-between;">
         <span style="font-size:15px;font-weight:700;">${d.fullName}</span>
-        ${logo ? `<img src="${logo}" alt="${d.company}" height="22" style="background:#fff;padding:2px;border-radius:3px;" />` : ""}
+        ${logo ? logoImg(logo, d.company || d.fullName, { height: 22 }) : ""}
       </div>
       <div style="padding:10px 16px;border:1px solid #e6e8ee;border-top:0;border-radius:0 0 6px 6px;font-size:12px;color:#5b6478;line-height:1.6;">
         ${d.jobTitle || d.company ? `<div style="color:#1a1f2e;font-weight:600;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}

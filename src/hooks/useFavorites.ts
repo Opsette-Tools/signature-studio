@@ -1,27 +1,16 @@
 import { useCallback, useEffect, useState } from "react";
-
-const STORAGE_KEY = "esg.favorites.v1";
+import { readJSON, storageKeys, writeJSON } from "@/utils/storage";
 
 function load(): string[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const arr = JSON.parse(raw) as string[];
-    return Array.isArray(arr) ? arr : [];
-  } catch {
-    return [];
-  }
+  const arr = readJSON<unknown>(storageKeys.favorites, []);
+  return Array.isArray(arr) ? (arr as string[]) : [];
 }
 
 export function useFavorites() {
   const [ids, setIds] = useState<string[]>(() => load());
 
   useEffect(() => {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(ids));
-    } catch {
-      /* ignore */
-    }
+    writeJSON(storageKeys.favorites, ids);
   }, [ids]);
 
   const isFavorite = useCallback((id: string) => ids.includes(id), [ids]);

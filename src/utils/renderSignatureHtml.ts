@@ -45,6 +45,29 @@ export function img(src: string, alt: string, attrs = ""): string {
   return `<img src="${src}" alt="${alt}" ${attrs} />`;
 }
 
+/**
+ * Logo image wrapped in a small white-padded inline-block.
+ * A dark-ink logo on a transparent background would otherwise vanish on dark surfaces
+ * and look glued-on on tinted ones. The white pad gives every logo a safe surface
+ * regardless of where it lands in the signature.
+ *
+ * `surface` controls the wrapper background. Use "auto" (default) for a white pad
+ * that works for any client; "transparent" if the parent surface is already white.
+ */
+export function logoImg(
+  src: string,
+  alt: string,
+  opts: { height?: number; surface?: "auto" | "transparent"; radius?: number } = {},
+): string {
+  if (!src) return "";
+  const height = opts.height ?? 32;
+  const radius = opts.radius ?? 3;
+  const surface = opts.surface ?? "auto";
+  const bg = surface === "transparent" ? "transparent" : "#ffffff";
+  const pad = surface === "transparent" ? 0 : 3;
+  return `<span style="display:inline-block;background:${bg};padding:${pad}px;border-radius:${radius}px;line-height:0;"><img src="${src}" alt="${alt}" height="${height}" style="display:block;height:${height}px;width:auto;" /></span>`;
+}
+
 /** Joins parts with separator, dropping empty values */
 export function join(parts: (string | false | null | undefined)[], sep = " · "): string {
   return parts.filter((v): v is string => Boolean(v && v.trim())).join(sep);

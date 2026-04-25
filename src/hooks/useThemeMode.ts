@@ -1,16 +1,11 @@
 import { useCallback, useEffect, useState } from "react";
+import { readString, storageKeys, writeString } from "@/utils/storage";
 
 export type ThemeMode = "light" | "dark";
 
-const STORAGE_KEY = "esg.theme.v1";
-
 function detectInitial(): ThemeMode {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
-    if (stored === "light" || stored === "dark") return stored;
-  } catch {
-    /* ignore */
-  }
+  const stored = readString(storageKeys.theme);
+  if (stored === "light" || stored === "dark") return stored;
   if (typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches) {
     return "dark";
   }
@@ -22,11 +17,7 @@ export function useThemeMode() {
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", mode);
-    try {
-      localStorage.setItem(STORAGE_KEY, mode);
-    } catch {
-      /* ignore */
-    }
+    writeString(storageKeys.theme, mode);
   }, [mode]);
 
   const toggle = useCallback(() => {

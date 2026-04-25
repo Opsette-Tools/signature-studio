@@ -1,10 +1,11 @@
-import { CodeOutlined, CopyOutlined, FileTextOutlined } from "@ant-design/icons";
+import { CodeOutlined, CopyOutlined, FileTextOutlined, ShareAltOutlined } from "@ant-design/icons";
 import { Button, Tabs, Tag } from "antd";
 import { useMemo, useState } from "react";
 import type { SignatureData } from "@/types/signature";
 import type { SignatureTemplate } from "@/types/template";
 import { useCopySignature } from "@/hooks/useCopySignature";
 import { SectionCard } from "@/components/ui/SectionCard";
+import { ShareModal } from "./ShareModal";
 
 type Props = {
   template: SignatureTemplate | undefined;
@@ -17,6 +18,7 @@ const WARN_LIMIT = 6 * 1024;
 export function CopyPanel({ template, data }: Props) {
   const { copyRich, copyHtml, copyPlain } = useCopySignature();
   const [tab, setTab] = useState("rich");
+  const [shareOpen, setShareOpen] = useState(false);
 
   const html = useMemo(() => (template ? template.renderHtml(data) : ""), [template, data]);
   const plain = useMemo(
@@ -75,6 +77,13 @@ export function CopyPanel({ template, data }: Props) {
         >
           Copy plain text
         </Button>
+        <Button
+          icon={<ShareAltOutlined />}
+          disabled={disabled}
+          onClick={() => setShareOpen(true)}
+        >
+          Share link
+        </Button>
       </div>
       <Tabs
         size="small"
@@ -103,6 +112,14 @@ export function CopyPanel({ template, data }: Props) {
           },
         ]}
       />
+      {template ? (
+        <ShareModal
+          open={shareOpen}
+          onClose={() => setShareOpen(false)}
+          data={data}
+          templateId={template.id}
+        />
+      ) : null}
     </SectionCard>
   );
 }

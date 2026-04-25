@@ -4,6 +4,7 @@ import {
   fontStack,
   join,
   link,
+  logoImg,
   socialTextLinks,
   telLink,
 } from "@/utils/renderSignatureHtml";
@@ -31,7 +32,7 @@ const bookCall: SignatureTemplate = {
     return `<div style="font-family:${fontStack};">
       <div style="font-size:14px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
       ${d.jobTitle || d.company ? `<div style="color:#5b6478;font-size:12px;margin-top:2px;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
-      ${d.bookingLink ? `<div style="margin-top:10px;">${bigCta("📅 Book a 15-min call", d.bookingLink, accent)}</div>` : ""}
+      ${d.bookingLink ? `<div style="margin-top:10px;">${bigCta(d.ctaLabel || "📅 Book a 15-min call", d.bookingLink, accent)}</div>` : ""}
       <div style="color:#5b6478;font-size:12px;margin-top:8px;">${join([emailLink(d.email), telLink(d.phone)])}</div>
     </div>`;
   },
@@ -53,7 +54,7 @@ const visitWebsite: SignatureTemplate = {
     const accent = d.accentColor || "#4f46e5";
     return `<div style="font-family:${fontStack};">
       <div style="font-size:14px;font-weight:700;color:#1a1f2e;">${d.fullName}${d.company ? ` · <span style="color:#5b6478;font-weight:400;">${d.company}</span>` : ""}</div>
-      ${d.website ? `<div style="margin-top:10px;">${bigCta("🌐 Visit our site", d.website, accent)}</div>` : ""}
+      ${d.website ? `<div style="margin-top:10px;">${bigCta(d.ctaLabel || "🌐 Visit our site", d.website, accent)}</div>` : ""}
       <div style="color:#5b6478;font-size:12px;margin-top:8px;">${join([emailLink(d.email), telLink(d.phone)])}</div>
     </div>`;
   },
@@ -132,7 +133,7 @@ const bannerImage: SignatureTemplate = {
           <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;opacity:0.85;">${d.tagline || "Latest from us"}</div>
           <div style="font-size:16px;font-weight:700;margin-top:2px;">${d.ctaLabel || d.company || d.fullName}</div>
         </div>
-        ${logo ? `<img src="${logo}" alt="${d.company}" height="36" style="background:#fff;padding:3px;border-radius:4px;" />` : ""}
+        ${logo ? logoImg(logo, d.company || d.fullName, { height: 36, radius: 4 }) : ""}
       </div>
       <div style="padding:10px 14px;border:1px solid #e6e8ee;border-top:0;border-radius:0 0 8px 8px;font-size:12px;color:#5b6478;line-height:1.6;">
         <div style="color:#1a1f2e;font-weight:600;">${d.fullName}${d.jobTitle ? ` — <span style="color:#5b6478;font-weight:400;">${d.jobTitle}</span>` : ""}</div>

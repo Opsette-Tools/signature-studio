@@ -6,6 +6,7 @@ import {
   fontStack,
   join,
   link,
+  logoImg,
   monogramTile,
   socialIconsRow,
   socialTextLinks,
@@ -37,7 +38,7 @@ const cardStyle: SignatureTemplate = {
     const left = profile
       ? `<img src="${profile}" alt="${d.fullName}" width="64" height="64" style="border-radius:50%;display:block;" />`
       : logo
-        ? `<img src="${logo}" alt="${d.company}" width="64" height="64" style="border-radius:8px;display:block;" />`
+        ? logoImg(logo, d.company || d.fullName, { height: 64, radius: 8 })
         : "";
     return `<div style="font-family:${fontStack};background:#f7f8fb;border:1px solid #e6e8ee;border-radius:12px;padding:14px;max-width:480px;">
       ${table(
@@ -107,7 +108,7 @@ const roundedLogo: SignatureTemplate = {
     const logo = getResolvedLogo(d);
     const accent = d.accentColor || accentDefault;
     const leftBlock = logo
-      ? `<img src="${logo}" alt="${d.company || d.fullName}" width="72" height="72" style="border-radius:14px;display:block;background:#fff;" />`
+      ? logoImg(logo, d.company || d.fullName, { height: 72, radius: 14 })
       : monogramTile(d.fullName, { size: 72, color: accent, radius: 14 });
     return table(
       tr(
@@ -185,7 +186,7 @@ const socialRow: SignatureTemplate = {
     const accent = d.accentColor || accentDefault;
     const logo = getResolvedLogo(d);
     return `<div style="font-family:${fontStack};">
-      ${logo ? `<img src="${logo}" alt="${d.company || d.fullName}" height="36" style="display:block;margin-bottom:8px;" />` : ""}
+      ${logo ? `<div style="margin-bottom:8px;">${logoImg(logo, d.company || d.fullName, { height: 36 })}</div>` : ""}
       <div style="font-size:15px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
       ${d.jobTitle || d.company ? `<div style="color:#5b6478;font-size:12px;margin-top:2px;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
       <div style="color:#5b6478;font-size:12px;margin-top:8px;">${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}</div>
@@ -290,7 +291,7 @@ const horizontalAccent: SignatureTemplate = {
       <div style="height:3px;background:${accent};margin:6px 0 8px;border-radius:2px;"></div>
       <div style="display:flex;align-items:center;justify-content:space-between;color:#5b6478;font-size:12px;line-height:1.6;">
         <span>${join([d.company, emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}</span>
-        ${logo ? `<img src="${logo}" alt="${d.company}" height="20" style="display:inline-block;" />` : ""}
+        ${logo ? logoImg(logo, d.company || d.fullName, { height: 20 }) : ""}
       </div>
     </div>`;
   },

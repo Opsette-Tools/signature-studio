@@ -1,31 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { emptySignatureData, type SignatureData } from "@/types/signature";
 import { sanitizeSignatureData } from "@/utils/sanitizeSignatureData";
-
-const STORAGE_KEY = "esg.draft.v1";
+import { readJSON, storageKeys, writeJSON } from "@/utils/storage";
 
 function loadDraft(): SignatureData {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return emptySignatureData;
-    const parsed = JSON.parse(raw) as Partial<SignatureData>;
-    return sanitizeSignatureData({ ...emptySignatureData, ...parsed });
-  } catch {
-    return emptySignatureData;
-  }
+  const partial = readJSON<Partial<SignatureData>>(storageKeys.draft, {});
+  return sanitizeSignatureData({ ...emptySignatureData, ...partial });
 }
 
 export function useSignatureForm() {
   const [data, setData] = useState<SignatureData>(() => loadDraft());
 
   useEffect(() => {
-    const id = window.setTimeout(() => {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-      } catch {
-        /* ignore quota */
-      }
-    }, 250);
+    const id = window.setTimeout(() => writeJSON(storageKeys.draft, data), 250);
     return () => window.clearTimeout(id);
   }, [data]);
 

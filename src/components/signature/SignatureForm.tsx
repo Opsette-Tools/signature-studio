@@ -85,14 +85,6 @@ export function SignatureForm({ data, onChange }: Props) {
                     hint="Square photos work best."
                   />
                 </Form.Item>
-                <Form.Item label="Accent color" style={{ marginBottom: 12 }}>
-                  <Input
-                    type="color"
-                    value={data.accentColor}
-                    onChange={(e) => onChange("accentColor", e.target.value)}
-                    style={{ width: 80, padding: 4 }}
-                  />
-                </Form.Item>
               </Form>
             </SectionCard>
           ),

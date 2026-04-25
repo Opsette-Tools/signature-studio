@@ -4,26 +4,11 @@ import {
   type SavedSignature,
   type SignatureData,
 } from "@/types/signature";
-
-const STORAGE_KEY = "esg.saved.v1";
+import { readJSON, storageKeys, writeJSON } from "@/utils/storage";
 
 function load(): SavedSignature[] {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const arr = JSON.parse(raw) as SavedSignature[];
-    return Array.isArray(arr) ? arr.slice(0, MAX_SAVED_SIGNATURES) : [];
-  } catch {
-    return [];
-  }
-}
-
-function persist(items: SavedSignature[]) {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-  } catch {
-    /* ignore */
-  }
+  const arr = readJSON<unknown>(storageKeys.saved, []);
+  return Array.isArray(arr) ? (arr as SavedSignature[]).slice(0, MAX_SAVED_SIGNATURES) : [];
 }
 
 function genId() {
@@ -34,7 +19,7 @@ export function useLocalSignatures() {
   const [items, setItems] = useState<SavedSignature[]>(() => load());
 
   useEffect(() => {
-    persist(items);
+    writeJSON(storageKeys.saved, items);
   }, [items]);
 
   const isFull = items.length >= MAX_SAVED_SIGNATURES;

@@ -5,6 +5,7 @@ import {
   fontStack,
   join,
   link,
+  logoImg,
   socialIconsRow,
   socialTextLinks,
   table,
@@ -91,7 +92,7 @@ const portfolio: SignatureTemplate = {
     return `<div style="font-family:${fontStack};">
       <div style="font-size:14px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
       ${d.jobTitle ? `<div style="color:#5b6478;font-size:12px;">${d.jobTitle}</div>` : ""}
-      ${d.website ? `<div style="margin-top:8px;"><a href="${d.website.startsWith("http") ? d.website : "https://" + d.website}" style="display:inline-block;background:${accent};color:#1a1f2e;font-weight:700;font-size:12px;padding:6px 12px;border-radius:4px;text-decoration:none;">View Portfolio →</a></div>` : ""}
+      ${d.website ? `<div style="margin-top:8px;"><a href="${d.website.startsWith("http") ? d.website : "https://" + d.website}" style="display:inline-block;background:${accent};color:#1a1f2e;font-weight:700;font-size:12px;padding:6px 12px;border-radius:4px;text-decoration:none;">${d.ctaLabel || "View Portfolio →"}</a></div>` : ""}
       <div style="color:#5b6478;font-size:12px;margin-top:8px;">${join([emailLink(d.email), telLink(d.phone)])}</div>
       ${socialTextLinks(d, accent) ? `<div style="font-size:12px;margin-top:4px;">${socialTextLinks(d, accent)}</div>` : ""}
     </div>`;
@@ -115,12 +116,12 @@ const casualService: SignatureTemplate = {
     const logo = getResolvedLogo(d);
     return `<div style="font-family:${fontStack};">
       <div style="display:flex;align-items:center;gap:8px;">
-        ${logo ? `<img src="${logo}" alt="${d.company || d.fullName}" height="32" style="display:inline-block;vertical-align:middle;border-radius:6px;" />` : ""}
+        ${logo ? logoImg(logo, d.company || d.fullName, { height: 32, radius: 6 }) : ""}
         <span style="font-size:14px;font-weight:700;color:#1a1f2e;vertical-align:middle;">${d.fullName}</span>
       </div>
       ${d.tagline ? `<div style="color:${accent};font-size:12px;margin-top:4px;font-weight:500;">${d.tagline}</div>` : ""}
       <div style="color:#5b6478;font-size:12px;margin-top:6px;line-height:1.6;">${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}</div>
-      ${d.bookingLink ? `<div style="margin-top:8px;font-size:12px;">→ <a href="${d.bookingLink.startsWith("http") ? d.bookingLink : "https://" + d.bookingLink}" style="color:${accent};font-weight:600;">Book a free chat</a></div>` : ""}
+      ${d.bookingLink ? `<div style="margin-top:8px;font-size:12px;">→ <a href="${d.bookingLink.startsWith("http") ? d.bookingLink : "https://" + d.bookingLink}" style="color:${accent};font-weight:600;">${d.ctaLabel || "Book a free chat"}</a></div>` : ""}
     </div>`;
   },
   renderPlainText: renderDefaultPlainText,

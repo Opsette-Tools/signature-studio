@@ -1,20 +1,16 @@
 import { useState, type ReactNode } from "react";
 import { allTemplates } from "@/data/templates";
 import { useSignatureForm } from "@/hooks/useSignatureForm";
+import { readString, storageKeys, writeString } from "@/utils/storage";
 import { SignatureCtx } from "./signatureContextValue";
 
 export { useSignatureContext } from "./signatureContextValue";
 
 const DEFAULT_TEMPLATE_ID = "modern-card-style";
-const STORAGE_KEY = "esg.selectedTemplate.v1";
 
 function loadInitialId(): string {
-  try {
-    const v = localStorage.getItem(STORAGE_KEY);
-    if (v && allTemplates.some((t) => t.id === v)) return v;
-  } catch {
-    /* ignore */
-  }
+  const v = readString(storageKeys.selectedTemplate);
+  if (v && allTemplates.some((t) => t.id === v)) return v;
   return DEFAULT_TEMPLATE_ID;
 }
 
@@ -24,11 +20,7 @@ export function SignatureProvider({ children }: { children: ReactNode }) {
 
   const setSelectedTemplateId = (id: string) => {
     setSelectedTemplateIdState(id);
-    try {
-      localStorage.setItem(STORAGE_KEY, id);
-    } catch {
-      /* ignore */
-    }
+    writeString(storageKeys.selectedTemplate, id);
   };
 
   const selectedTemplate = allTemplates.find((t) => t.id === selectedTemplateId);

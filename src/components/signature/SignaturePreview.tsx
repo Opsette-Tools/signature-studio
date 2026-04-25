@@ -1,5 +1,3 @@
-import { Button } from "antd";
-import { Link } from "react-router-dom";
 import type { SignatureData } from "@/types/signature";
 import type { SignatureTemplate } from "@/types/template";
 import { hasAnyContent } from "@/utils/sanitizeSignatureData";
@@ -22,11 +20,9 @@ export function SignaturePreview({ template, data }: Props) {
       <div className="signature-preview">
         <div className="signature-preview__empty">
           <p>
-            This is the <strong>{template.name}</strong> template. Add your details to generate the final signature.
+            This is the <strong>{template.name}</strong> template. Fill in your details on the left
+            to see your signature here.
           </p>
-          <Link to="/edit">
-            <Button type="primary">Edit your info</Button>
-          </Link>
         </div>
       </div>
     );
