@@ -67,19 +67,21 @@ export function SignatureForm({ data, onChange }: Props) {
                     onChange={(e) => onChange("logoUrl", e.target.value)}
                   />
                 </Form.Item>
-                <Form.Item label="Upload logo (local)" style={{ marginBottom: 12 }}>
+                <Form.Item label="Logo (local upload or URL)" style={{ marginBottom: 12 }}>
                   <ImageUploader
                     value={data.logoDataUrl}
                     onChange={(v) => onChange("logoDataUrl", v)}
                     label="Choose logo"
-                    hint="Used only if no Logo URL is set."
+                    preset="logo"
+                    hint="Used only if no Logo URL above is set."
                   />
                 </Form.Item>
-                <Form.Item label="Upload profile photo (local)" style={{ marginBottom: 12 }}>
+                <Form.Item label="Profile photo (local upload or URL)" style={{ marginBottom: 12 }}>
                   <ImageUploader
                     value={data.profileImageDataUrl}
                     onChange={(v) => onChange("profileImageDataUrl", v)}
                     label="Choose photo"
+                    preset="profile"
                     hint="Square photos work best."
                   />
                 </Form.Item>
