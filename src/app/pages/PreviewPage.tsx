@@ -1,3 +1,6 @@
+import { EditOutlined } from "@ant-design/icons";
+import { Button } from "antd";
+import { Link } from "react-router-dom";
 import { CopyPanel } from "@/components/signature/CopyPanel";
 import { SignaturePreview } from "@/components/signature/SignaturePreview";
 import { SectionCard } from "@/components/ui/SectionCard";
@@ -9,7 +12,12 @@ export function PreviewPage() {
     <div className="stack">
       <SectionCard
         title={selectedTemplate ? `Preview · ${selectedTemplate.name}` : "Preview"}
-        hint="This is how your signature will look in an email client."
+        hint="Use the Edit info tab to fill in your name, company, contact details, images, social links, and CTA."
+        extra={
+          <Link to="/edit">
+            <Button type="primary" icon={<EditOutlined />}>Edit info</Button>
+          </Link>
+        }
       >
         <SignaturePreview template={selectedTemplate} data={data} />
       </SectionCard>
@@ -17,3 +25,4 @@ export function PreviewPage() {
     </div>
   );
 }
+
