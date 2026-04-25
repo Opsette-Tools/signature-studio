@@ -1,20 +1,9 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { allTemplates } from "@/data/templates";
 import { useSignatureForm } from "@/hooks/useSignatureForm";
-import type { SignatureData } from "@/types/signature";
-import type { SignatureTemplate } from "@/types/template";
+import { SignatureCtx } from "./signatureContextValue";
 
-type Ctx = {
-  data: SignatureData;
-  update: <K extends keyof SignatureData>(key: K, value: SignatureData[K]) => void;
-  replaceAll: (next: SignatureData) => void;
-  reset: () => void;
-  selectedTemplateId: string;
-  setSelectedTemplateId: (id: string) => void;
-  selectedTemplate: SignatureTemplate | undefined;
-};
-
-const SignatureCtx = createContext<Ctx | null>(null);
+export { useSignatureContext } from "./signatureContextValue";
 
 const DEFAULT_TEMPLATE_ID = "modern-card-style";
 const STORAGE_KEY = "esg.selectedTemplate.v1";
@@ -59,10 +48,4 @@ export function SignatureProvider({ children }: { children: ReactNode }) {
       {children}
     </SignatureCtx.Provider>
   );
-}
-
-export function useSignatureContext(): Ctx {
-  const ctx = useContext(SignatureCtx);
-  if (!ctx) throw new Error("SignatureProvider missing");
-  return ctx;
 }
