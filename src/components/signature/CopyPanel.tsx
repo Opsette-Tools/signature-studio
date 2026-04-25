@@ -1,5 +1,5 @@
 import { CodeOutlined, CopyOutlined, FileTextOutlined } from "@ant-design/icons";
-import { Button, Tabs } from "antd";
+import { Button, Tabs, Tag } from "antd";
 import { useMemo, useState } from "react";
 import type { SignatureData } from "@/types/signature";
 import type { SignatureTemplate } from "@/types/template";
@@ -11,6 +11,9 @@ type Props = {
   data: SignatureData;
 };
 
+const SAFE_LIMIT = 8 * 1024; // 8 KB — fits Outlook + Gmail comfortably
+const WARN_LIMIT = 6 * 1024;
+
 export function CopyPanel({ template, data }: Props) {
   const { copyRich, copyHtml, copyPlain } = useCopySignature();
   const [tab, setTab] = useState("rich");
@@ -21,6 +24,17 @@ export function CopyPanel({ template, data }: Props) {
     [template, data],
   );
 
+  const sizeBytes = useMemo(() => new Blob([html]).size, [html]);
+  const sizeKb = (sizeBytes / 1024).toFixed(1);
+  const sizeColor: "green" | "orange" | "red" =
+    sizeBytes < WARN_LIMIT ? "green" : sizeBytes < SAFE_LIMIT ? "orange" : "red";
+  const sizeLabel =
+    sizeColor === "green"
+      ? "Fits all email clients"
+      : sizeColor === "orange"
+        ? "Approaching Outlook limit"
+        : "Too large — likely to be clipped";
+
   const disabled = !template;
 
   return (
@@ -28,6 +42,16 @@ export function CopyPanel({ template, data }: Props) {
       title="Copy & export"
       hint="Paste into Gmail, Outlook, Apple Mail, etc."
     >
+      <div className="row" style={{ marginBottom: 12, alignItems: "center" }}>
+        <Tag color={sizeColor}>
+          {sizeKb} KB / 8 KB · {sizeLabel}
+        </Tag>
+        {sizeColor === "red" ? (
+          <small style={{ color: "var(--color-text-muted)" }}>
+            Tip: switch image uploads to "Paste URL", or remove the logo/photo.
+          </small>
+        ) : null}
+      </div>
       <div className="row" style={{ marginBottom: 12 }}>
         <Button
           type="primary"
