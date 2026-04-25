@@ -163,6 +163,31 @@ a:hover {
   line-height: 1;
 }
 
+.page-action-bar {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  box-shadow: var(--shadow-sm);
+}
+
+.page-action-bar__title {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--color-text);
+}
+
+.page-action-bar__hint {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-muted);
+  font-size: 13px;
+}
+
 /* Section card */
 .section-card {
   background: var(--color-surface);
