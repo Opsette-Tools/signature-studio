@@ -1,0 +1,74 @@
+/* Design tokens — light + dark theme */
+:root {
+  /* Surfaces */
+  --color-bg: #f7f8fb;
+  --color-surface: #ffffff;
+  --color-surface-2: #f2f4f8;
+  --color-border: #e6e8ee;
+  --color-border-strong: #d3d7e0;
+
+  /* Text */
+  --color-text: #1a1f2e;
+  --color-text-muted: #5b6478;
+  --color-text-subtle: #8a93a6;
+
+  /* Brand */
+  --color-primary: #4f46e5;
+  --color-primary-hover: #4338ca;
+  --color-accent: #06b6d4;
+
+  /* Status */
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-danger: #ef4444;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  /* Shadow */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.08);
+  --shadow-lg: 0 12px 32px rgba(15, 23, 42, 0.12);
+
+  /* Layout */
+  --header-height: 56px;
+  --bottom-nav-height: 64px;
+  --max-content-width: 1280px;
+
+  /* Typography */
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+[data-theme="dark"] {
+  --color-bg: #0f1218;
+  --color-surface: #161b24;
+  --color-surface-2: #1d2330;
+  --color-border: #262d3d;
+  --color-border-strong: #353d50;
+
+  --color-text: #e6e9f0;
+  --color-text-muted: #9aa3b8;
+  --color-text-subtle: #6b7388;
+
+  --color-primary: #818cf8;
+  --color-primary-hover: #a5b0ff;
+  --color-accent: #22d3ee;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.55);
+}
