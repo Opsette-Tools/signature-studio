@@ -52,12 +52,10 @@ export function SignatureCard({ template, data, active, favorite, onSelect, onTo
         />
       </div>
       <div className="template-card__tags">
-        <Tag bordered={false} color="processing">
-          {CATEGORY_LABELS[template.category]}
-        </Tag>
-        {template.supportsLogo ? <Tag bordered={false}>Logo</Tag> : null}
-        {template.supportsImage ? <Tag bordered={false}>Photo</Tag> : null}
-        {template.supportsSocialLinks ? <Tag bordered={false}>Social</Tag> : null}
+        <Tag color="processing">{CATEGORY_LABELS[template.category]}</Tag>
+        {template.supportsLogo ? <Tag>Logo</Tag> : null}
+        {template.supportsImage ? <Tag>Photo</Tag> : null}
+        {template.supportsSocialLinks ? <Tag>Social</Tag> : null}
       </div>
     </div>
   );
