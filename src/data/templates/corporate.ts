@@ -4,7 +4,6 @@ import {
   fontStack,
   join,
   link,
-  socialTextLinks,
   table,
   td,
   telLink,
@@ -13,13 +12,13 @@ import {
 import { getResolvedLogo } from "@/utils/sanitizeSignatureData";
 import { renderDefaultPlainText } from "@/utils/renderPlainText";
 
-// 1. Executive Formal
+// 1. Executive Formal — serif
 const executive: SignatureTemplate = {
   id: "corporate-executive",
   name: "Executive Formal",
   category: "corporate",
-  tags: ["executive", "formal", "serious"],
-  description: "Serif-friendly, formal layout for senior roles.",
+  tags: ["executive", "formal", "serif"],
+  description: "Serif typography and a formal layout for senior roles.",
   supportsImage: false,
   supportsLogo: true,
   supportsSocialLinks: false,
@@ -164,7 +163,65 @@ const companyFooter: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-void socialTextLinks;
+// 6. Name Plate — reversed-out white text on accent block
+const namePlate: SignatureTemplate = {
+  id: "corporate-name-plate",
+  name: "Name Plate",
+  category: "corporate",
+  tags: ["nameplate", "reverse", "block"],
+  description: "Reversed-out name plate with white text on a colored block.",
+  supportsImage: false,
+  supportsLogo: true,
+  supportsSocialLinks: false,
+  layoutType: "stacked",
+  renderHtml: (d) => {
+    const accent = d.accentColor || "#1a1f2e";
+    const logo = getResolvedLogo(d);
+    return `<div style="font-family:${fontStack};max-width:460px;">
+      <div style="background:${accent};color:#fff;padding:10px 14px;display:inline-block;">
+        <div style="font-size:15px;font-weight:700;letter-spacing:0.5px;">${d.fullName}</div>
+        ${d.jobTitle ? `<div style="font-size:11px;opacity:0.85;text-transform:uppercase;letter-spacing:1.2px;margin-top:2px;">${d.jobTitle}</div>` : ""}
+      </div>
+      <div style="padding:8px 0 0;font-size:12px;color:#5b6478;line-height:1.6;">
+        ${d.company ? `<div style="color:#1a1f2e;font-weight:600;">${d.company}</div>` : ""}
+        ${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)], " · ")}
+        ${logo ? `<div style="margin-top:6px;"><img src="${logo}" alt="${d.company}" height="22" style="display:inline-block;" /></div>` : ""}
+      </div>
+    </div>`;
+  },
+  renderPlainText: renderDefaultPlainText,
+};
+
+// 7. Two-Tone Header — split background header
+const twoToneHeader: SignatureTemplate = {
+  id: "corporate-two-tone-header",
+  name: "Two-Tone Header",
+  category: "corporate",
+  tags: ["header", "two-tone", "branded"],
+  description: "Split-color header with name on dark, role on accent.",
+  supportsImage: false,
+  supportsLogo: true,
+  supportsSocialLinks: false,
+  layoutType: "banner",
+  renderHtml: (d) => {
+    const accent = d.accentColor || "#4f46e5";
+    const logo = getResolvedLogo(d);
+    return `<div style="font-family:${fontStack};max-width:480px;border-radius:6px;overflow:hidden;border:1px solid #e6e8ee;">
+      <table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;width:100%;">
+        <tr>
+          <td style="background:#1a1f2e;color:#fff;padding:10px 14px;font-weight:700;font-size:14px;">${d.fullName}</td>
+          <td style="background:${accent};color:#fff;padding:10px 14px;font-size:12px;font-weight:600;text-align:right;">${d.jobTitle || d.company || ""}</td>
+        </tr>
+      </table>
+      <div style="padding:10px 14px;font-size:12px;color:#5b6478;line-height:1.6;background:#fff;">
+        ${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}
+        ${d.address ? `<div>${d.address}</div>` : ""}
+        ${logo ? `<div style="margin-top:6px;"><img src="${logo}" alt="${d.company}" height="20" /></div>` : ""}
+      </div>
+    </div>`;
+  },
+  renderPlainText: renderDefaultPlainText,
+};
 
 export const corporateTemplates: SignatureTemplate[] = [
   executive,
@@ -172,4 +229,6 @@ export const corporateTemplates: SignatureTemplate[] = [
   consultant,
   teamMember,
   companyFooter,
+  namePlate,
+  twoToneHeader,
 ];

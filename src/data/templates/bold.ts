@@ -1,15 +1,11 @@
 import type { SignatureTemplate } from "@/types/template";
 import {
-  ctaButton,
   emailLink,
   fontStack,
   join,
   link,
   socialIconsRow,
-  table,
-  td,
   telLink,
-  tr,
 } from "@/utils/renderSignatureHtml";
 import { getResolvedLogo } from "@/utils/sanitizeSignatureData";
 import { renderDefaultPlainText } from "@/utils/renderPlainText";
@@ -65,7 +61,7 @@ const colorStripe: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-// 3. High Contrast (dark template — intentionally dark)
+// 3. High Contrast (dark template)
 const highContrast: SignatureTemplate = {
   id: "bold-high-contrast",
   name: "High Contrast",
@@ -102,7 +98,7 @@ const blockHeader: SignatureTemplate = {
   renderHtml: (d) => {
     const accent = d.accentColor || "#4f46e5";
     return `<div style="font-family:${fontStack};">
-      <div style="display:inline-block;background:#1a1f2e;color:#fff;padding:6px 12px;border-radius:4px;font-size:13px;font-weight:700;letter-spacing:0.3px;">${d.fullName.toUpperCase()}</div>
+      <div style="display:inline-block;background:#1a1f2e;color:#fff;padding:6px 12px;border-radius:4px;font-size:13px;font-weight:700;letter-spacing:0.3px;">${(d.fullName || "").toUpperCase()}</div>
       ${d.jobTitle ? `<div style="color:${accent};font-size:13px;font-weight:600;margin-top:6px;">${d.jobTitle}${d.company ? ` @ ${d.company}` : ""}</div>` : d.company ? `<div style="color:${accent};font-size:13px;font-weight:600;margin-top:6px;">${d.company}</div>` : ""}
       <div style="color:#5b6478;font-size:12px;margin-top:6px;line-height:1.6;">${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}</div>
     </div>`;
@@ -110,37 +106,37 @@ const blockHeader: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-// 5. CTA Button Style
-const ctaButtonStyle: SignatureTemplate = {
-  id: "bold-cta-button",
-  name: "CTA Button Style",
+// 5. All Caps Spaced — typographic statement
+const allCapsSpaced: SignatureTemplate = {
+  id: "bold-all-caps-spaced",
+  name: "All Caps Spaced",
   category: "bold",
-  tags: ["cta", "button", "action"],
-  description: "Prominent CTA button as the centerpiece.",
+  tags: ["all-caps", "typography", "spaced"],
+  description: "Letterspaced uppercase name as the design statement.",
   supportsImage: false,
   supportsLogo: false,
   supportsSocialLinks: false,
   layoutType: "stacked",
   renderHtml: (d) => {
-    const accent = d.accentColor || "#4f46e5";
+    const accent = d.accentColor || "#1a1f2e";
     return `<div style="font-family:${fontStack};">
-      <div style="font-size:14px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
-      ${d.jobTitle || d.company ? `<div style="color:#5b6478;font-size:12px;margin-top:2px;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
-      <div style="color:#5b6478;font-size:12px;margin-top:6px;">${join([emailLink(d.email), telLink(d.phone)])}</div>
-      ${ctaButton(d, { color: accent, radius: 6 }) ? `<div style="margin-top:12px;">${ctaButton(d, { color: accent, radius: 6 })}</div>` : ""}
+      <div style="font-size:14px;font-weight:800;color:${accent};text-transform:uppercase;letter-spacing:6px;line-height:1.2;">${d.fullName}</div>
+      <div style="height:1px;background:#1a1f2e;width:100%;max-width:280px;margin:8px 0;"></div>
+      ${d.jobTitle || d.company ? `<div style="font-size:11px;color:#5b6478;text-transform:uppercase;letter-spacing:2px;">${join([d.jobTitle, d.company], " — ")}</div>` : ""}
+      <div style="color:#5b6478;font-size:12px;margin-top:8px;line-height:1.7;">
+        ${d.email ? `<div>${emailLink(d.email)}</div>` : ""}
+        ${d.phone ? `<div>${telLink(d.phone)}</div>` : ""}
+        ${d.website ? `<div>${link(d.website, d.website)}</div>` : ""}
+      </div>
     </div>`;
   },
   renderPlainText: renderDefaultPlainText,
 };
-
-void table;
-void td;
-void tr;
 
 export const boldTemplates: SignatureTemplate[] = [
   bigName,
   colorStripe,
   highContrast,
   blockHeader,
-  ctaButtonStyle,
+  allCapsSpaced,
 ];
