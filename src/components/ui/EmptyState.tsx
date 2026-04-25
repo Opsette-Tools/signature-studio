@@ -1,5 +1,5 @@
 import { Empty, type EmptyProps } from "antd";
-import type { ReactNode } from "react";
+import { forwardRef, type ReactNode } from "react";
 
 type Props = {
   title?: string;
@@ -8,11 +8,14 @@ type Props = {
   children?: ReactNode;
 };
 
-export function EmptyState({ title, description, image, children }: Props) {
+export const EmptyState = forwardRef<HTMLDivElement, Props>(function EmptyState(
+  { title, description, image, children },
+  ref,
+) {
   return (
-    <div className="empty-state">
+    <div className="empty-state" ref={ref}>
       <Empty image={image} description={description || title || "Nothing here yet"} />
       {children ? <div style={{ marginTop: 12 }}>{children}</div> : null}
     </div>
   );
-}
+});
