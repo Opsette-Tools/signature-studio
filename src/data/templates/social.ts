@@ -5,7 +5,6 @@ import {
   fontStack,
   join,
   link,
-  normalizeUrl,
   socialIconsRow,
   socialTextLinks,
   table,
@@ -13,6 +12,7 @@ import {
   telLink,
   tr,
 } from "@/utils/renderSignatureHtml";
+import { normalizeUrl } from "@/utils/sanitizeSignatureData";
 import { renderDefaultPlainText } from "@/utils/renderPlainText";
 
 // helper for "big CTA" templates

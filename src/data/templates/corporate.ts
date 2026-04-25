@@ -2,7 +2,6 @@ import type { SignatureTemplate } from "@/types/template";
 import {
   emailLink,
   fontStack,
-  getResolvedLogo,
   join,
   link,
   socialTextLinks,
@@ -11,6 +10,7 @@ import {
   telLink,
   tr,
 } from "@/utils/renderSignatureHtml";
+import { getResolvedLogo } from "@/utils/sanitizeSignatureData";
 import { renderDefaultPlainText } from "@/utils/renderPlainText";
 
 // 1. Executive Formal

@@ -3,7 +3,6 @@ import {
   ctaButton,
   emailLink,
   fontStack,
-  getResolvedLogo,
   img,
   join,
   link,
@@ -14,6 +13,7 @@ import {
   telLink,
   tr,
 } from "@/utils/renderSignatureHtml";
+import { getResolvedLogo } from "@/utils/sanitizeSignatureData";
 import { renderDefaultPlainText } from "@/utils/renderPlainText";
 
 const accentDefault = "#4f46e5";

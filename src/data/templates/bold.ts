@@ -3,7 +3,6 @@ import {
   ctaButton,
   emailLink,
   fontStack,
-  getResolvedLogo,
   join,
   link,
   socialIconsRow,
@@ -12,6 +11,7 @@ import {
   telLink,
   tr,
 } from "@/utils/renderSignatureHtml";
+import { getResolvedLogo } from "@/utils/sanitizeSignatureData";
 import { renderDefaultPlainText } from "@/utils/renderPlainText";
 
 // 1. Big Name
