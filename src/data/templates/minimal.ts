@@ -1,19 +1,14 @@
 import type { SignatureTemplate } from "@/types/template";
 import {
-  ctaButton,
   emailLink,
   fontStack,
-  img,
   join,
   link,
-  socialIconsRow,
-  socialTextLinks,
   table,
   td,
   telLink,
   tr,
 } from "@/utils/renderSignatureHtml";
-import { getResolvedLogo } from "@/utils/sanitizeSignatureData";
 import { renderDefaultPlainText } from "@/utils/renderPlainText";
 
 const accentDefault = "#4f46e5";
@@ -82,29 +77,7 @@ const simpleDivider: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-// 3. Text Only
-const textOnly: SignatureTemplate = {
-  id: "minimal-text-only",
-  name: "Text Only",
-  category: "minimal",
-  tags: ["text", "plain", "no-image"],
-  description: "Pure text signature with no styling flourish.",
-  supportsImage: false,
-  supportsLogo: false,
-  supportsSocialLinks: false,
-  layoutType: "stacked",
-  renderHtml: (d) => {
-    return `<div style="font-family:${fontStack};font-size:13px;color:#1a1f2e;line-height:1.5;">
-      ${d.fullName ? `${d.fullName}<br/>` : ""}
-      ${join([d.jobTitle, d.company], ", ")}${d.jobTitle || d.company ? "<br/>" : ""}
-      ${d.email ? `${emailLink(d.email)}` : ""}${d.email && d.phone ? " | " : ""}${telLink(d.phone)}
-      ${d.website ? `<br/>${link(d.website, d.website)}` : ""}
-    </div>`;
-  },
-  renderPlainText: renderDefaultPlainText,
-};
-
-// 4. Compact Contact Block
+// 3. Compact Contact Block
 const compactContact: SignatureTemplate = {
   id: "minimal-compact-contact",
   name: "Compact Contact Block",
@@ -129,37 +102,8 @@ const compactContact: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-// 5. Tiny Footer
-const tinyFooter: SignatureTemplate = {
-  id: "minimal-tiny-footer",
-  name: "Tiny Footer",
-  category: "minimal",
-  tags: ["tiny", "footer", "small"],
-  description: "Small grey footer-style signature for short emails.",
-  supportsImage: false,
-  supportsLogo: false,
-  supportsSocialLinks: false,
-  layoutType: "footer",
-  renderHtml: (d) => {
-    return `<div style="font-family:${fontStack};font-size:11px;color:#8a93a6;line-height:1.5;border-top:1px solid #e6e8ee;padding-top:8px;">
-      ${join([d.fullName, d.jobTitle, d.company], " · ")}<br/>
-      ${join([emailLink(d.email, "color:#8a93a6;"), telLink(d.phone, "color:#8a93a6;"), link(d.website, d.website, "color:#8a93a6;")])}
-    </div>`;
-  },
-  renderPlainText: renderDefaultPlainText,
-};
-
-// helper: pulls in optional CTA/social/disclaimer block to enrich some minimal templates if filled in
-void ctaButton;
-void socialIconsRow;
-void socialTextLinks;
-void getResolvedLogo;
-void img;
-
 export const minimalTemplates: SignatureTemplate[] = [
   cleanNameTitle,
   simpleDivider,
-  textOnly,
   compactContact,
-  tinyFooter,
 ];

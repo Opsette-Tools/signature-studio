@@ -1,21 +1,15 @@
 import type { SignatureTemplate } from "@/types/template";
 import {
-  ctaButton,
   emailLink,
   fontStack,
   join,
   link,
-  socialIconsRow,
   socialTextLinks,
-  table,
-  td,
   telLink,
-  tr,
 } from "@/utils/renderSignatureHtml";
-import { normalizeUrl } from "@/utils/sanitizeSignatureData";
+import { getResolvedLogo, normalizeUrl } from "@/utils/sanitizeSignatureData";
 import { renderDefaultPlainText } from "@/utils/renderPlainText";
 
-// helper for "big CTA" templates
 function bigCta(label: string, url: string, color: string, icon = ""): string {
   if (!url) return "";
   return `<a href="${normalizeUrl(url)}" style="display:inline-block;background:${color};color:#fff;padding:10px 18px;border-radius:8px;font-family:${fontStack};font-size:14px;font-weight:700;text-decoration:none;">${icon ? `${icon} ` : ""}${label}</a>`;
@@ -23,9 +17,9 @@ function bigCta(label: string, url: string, color: string, icon = ""): string {
 
 // 1. Book a Call
 const bookCall: SignatureTemplate = {
-  id: "social-book-call",
+  id: "promotional-book-call",
   name: "Book a Call",
-  category: "social",
+  category: "promotional",
   tags: ["cta", "booking", "call"],
   description: "Call-to-action centered on a booking link.",
   supportsImage: false,
@@ -46,9 +40,9 @@ const bookCall: SignatureTemplate = {
 
 // 2. Visit Website
 const visitWebsite: SignatureTemplate = {
-  id: "social-visit-website",
+  id: "promotional-visit-website",
   name: "Visit Website",
-  category: "social",
+  category: "promotional",
   tags: ["website", "cta"],
   description: "Promotes a website visit as the primary action.",
   supportsImage: false,
@@ -66,34 +60,11 @@ const visitWebsite: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-// 3. Follow Me
-const followMe: SignatureTemplate = {
-  id: "social-follow-me",
-  name: "Follow Me",
-  category: "social",
-  tags: ["social", "follow"],
-  description: "Social-first signature emphasising follow links.",
-  supportsImage: false,
-  supportsLogo: false,
-  supportsSocialLinks: true,
-  layoutType: "stacked",
-  renderHtml: (d) => {
-    const accent = d.accentColor || "#ec4899";
-    return `<div style="font-family:${fontStack};">
-      <div style="font-size:14px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
-      ${d.tagline ? `<div style="color:#5b6478;font-size:12px;font-style:italic;">${d.tagline}</div>` : ""}
-      ${socialIconsRow(d, { color: accent, size: 28 }) ? `<div style="margin-top:10px;">${socialIconsRow(d, { color: accent, size: 28 })}</div>` : ""}
-      <div style="color:#5b6478;font-size:12px;margin-top:8px;">${emailLink(d.email)}</div>
-    </div>`;
-  },
-  renderPlainText: renderDefaultPlainText,
-};
-
-// 4. Download Resource
+// 3. Download Resource
 const downloadResource: SignatureTemplate = {
-  id: "social-download-resource",
+  id: "promotional-download-resource",
   name: "Download Resource",
-  category: "social",
+  category: "promotional",
   tags: ["download", "resource", "cta"],
   description: "Highlights a downloadable resource via the CTA field.",
   supportsImage: false,
@@ -112,11 +83,11 @@ const downloadResource: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-// 5. Newsletter CTA
+// 4. Newsletter CTA
 const newsletter: SignatureTemplate = {
-  id: "social-newsletter",
+  id: "promotional-newsletter",
   name: "Newsletter CTA",
-  category: "social",
+  category: "promotional",
   tags: ["newsletter", "subscribe"],
   description: "Subscribe-to-newsletter focused signature.",
   supportsImage: false,
@@ -141,15 +112,79 @@ const newsletter: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-void ctaButton;
-void table;
-void td;
-void tr;
+// 5. Banner Image — full-width banner using logo or CTA artwork
+const bannerImage: SignatureTemplate = {
+  id: "promotional-banner-image",
+  name: "Banner Image",
+  category: "promotional",
+  tags: ["banner", "image", "cta"],
+  description: "Full-width promotional banner above contact info. Uses your logo as the banner artwork.",
+  supportsImage: false,
+  supportsLogo: true,
+  supportsSocialLinks: false,
+  layoutType: "banner",
+  renderHtml: (d) => {
+    const accent = d.accentColor || "#4f46e5";
+    const logo = getResolvedLogo(d);
+    return `<div style="font-family:${fontStack};max-width:480px;">
+      <div style="background:linear-gradient(90deg, ${accent}, #1a1f2e);color:#fff;padding:16px 18px;border-radius:8px 8px 0 0;display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div style="font-size:11px;text-transform:uppercase;letter-spacing:1.5px;opacity:0.85;">${d.tagline || "Latest from us"}</div>
+          <div style="font-size:16px;font-weight:700;margin-top:2px;">${d.ctaLabel || d.company || d.fullName}</div>
+        </div>
+        ${logo ? `<img src="${logo}" alt="${d.company}" height="36" style="background:#fff;padding:3px;border-radius:4px;" />` : ""}
+      </div>
+      <div style="padding:10px 14px;border:1px solid #e6e8ee;border-top:0;border-radius:0 0 8px 8px;font-size:12px;color:#5b6478;line-height:1.6;">
+        <div style="color:#1a1f2e;font-weight:600;">${d.fullName}${d.jobTitle ? ` — <span style="color:#5b6478;font-weight:400;">${d.jobTitle}</span>` : ""}</div>
+        ${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}
+        ${d.ctaUrl ? `<div style="margin-top:6px;"><a href="${normalizeUrl(d.ctaUrl)}" style="color:${accent};font-weight:700;text-decoration:none;">${d.ctaLabel || "Learn more"} →</a></div>` : ""}
+      </div>
+    </div>`;
+  },
+  renderPlainText: renderDefaultPlainText,
+};
 
-export const socialTemplates: SignatureTemplate[] = [
+// 6. Event Promo — date-led promo block
+const eventPromo: SignatureTemplate = {
+  id: "promotional-event-promo",
+  name: "Event Promo",
+  category: "promotional",
+  tags: ["event", "promo", "cta"],
+  description: "Event-style promo block with a date badge and CTA link.",
+  supportsImage: false,
+  supportsLogo: false,
+  supportsSocialLinks: false,
+  layoutType: "two-column",
+  renderHtml: (d) => {
+    const accent = d.accentColor || "#ef4444";
+    return `<div style="font-family:${fontStack};">
+      <div style="font-size:14px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
+      ${d.jobTitle || d.company ? `<div style="color:#5b6478;font-size:12px;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
+      ${d.ctaUrl
+        ? `<table cellpadding="0" cellspacing="0" border="0" style="border-collapse:collapse;margin-top:10px;">
+            <tr>
+              <td style="background:${accent};color:#fff;padding:8px 10px;text-align:center;border-radius:6px 0 0 6px;width:54px;">
+                <div style="font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:700;opacity:0.9;">Live</div>
+                <div style="font-size:18px;font-weight:800;line-height:1;margin-top:2px;">★</div>
+              </td>
+              <td style="background:#fff;border:1px solid #e6e8ee;border-left:0;padding:8px 12px;border-radius:0 6px 6px 0;">
+                <div style="font-size:12px;color:#1a1f2e;font-weight:700;">${d.ctaLabel || "Join our next event"}</div>
+                <a href="${normalizeUrl(d.ctaUrl)}" style="color:${accent};font-size:11px;font-weight:600;text-decoration:none;">Reserve your spot →</a>
+              </td>
+            </tr>
+          </table>`
+        : ""}
+      <div style="color:#5b6478;font-size:12px;margin-top:8px;">${join([emailLink(d.email), link(d.website, d.website)])}</div>
+    </div>`;
+  },
+  renderPlainText: renderDefaultPlainText,
+};
+
+export const promotionalTemplates: SignatureTemplate[] = [
   bookCall,
   visitWebsite,
-  followMe,
   downloadResource,
   newsletter,
+  bannerImage,
+  eventPromo,
 ];

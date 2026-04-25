@@ -1,11 +1,12 @@
 import type { SignatureTemplate } from "@/types/template";
 import {
+  avatarOrMonogram,
   ctaButton,
   emailLink,
   fontStack,
-  img,
   join,
   link,
+  monogramTile,
   socialIconsRow,
   socialTextLinks,
   table,
@@ -105,16 +106,12 @@ const roundedLogo: SignatureTemplate = {
   renderHtml: (d) => {
     const logo = getResolvedLogo(d);
     const accent = d.accentColor || accentDefault;
+    const leftBlock = logo
+      ? `<img src="${logo}" alt="${d.company || d.fullName}" width="72" height="72" style="border-radius:14px;display:block;background:#fff;" />`
+      : monogramTile(d.fullName, { size: 72, color: accent, radius: 14 });
     return table(
       tr(
-        `${
-          logo
-            ? td(
-                `<img src="${logo}" alt="${d.company || d.fullName}" width="72" height="72" style="border-radius:14px;display:block;background:#fff;" />`,
-                "padding-right:16px;vertical-align:middle;width:72px;",
-              )
-            : ""
-        }
+        `${td(leftBlock, "padding-right:16px;vertical-align:middle;width:72px;")}
          ${td(
            `<div style="font-family:${fontStack};">
               <div style="font-size:15px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
@@ -198,10 +195,107 @@ const socialRow: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-void table;
-void td;
-void tr;
-void img;
+// 6. Photo Left Divider — large profile image with vertical divider
+const photoLeftDivider: SignatureTemplate = {
+  id: "modern-photo-left-divider",
+  name: "Photo Left + Divider",
+  category: "modern",
+  tags: ["photo", "divider", "vertical"],
+  description: "Large profile photo with a vertical divider separating contact info.",
+  supportsImage: true,
+  supportsLogo: false,
+  supportsSocialLinks: true,
+  layoutType: "two-column",
+  renderHtml: (d) => {
+    const accent = d.accentColor || accentDefault;
+    return table(
+      tr(
+        `${td(
+          avatarOrMonogram(d, { size: 84, color: accent, circle: false }),
+          "padding-right:18px;vertical-align:top;width:84px;",
+        )}
+         ${td(
+           `<div style="font-family:${fontStack};border-left:2px solid #e6e8ee;padding-left:18px;min-height:84px;">
+              <div style="font-size:17px;font-weight:700;color:#1a1f2e;letter-spacing:-0.2px;">${d.fullName}</div>
+              ${d.jobTitle ? `<div style="color:${accent};font-size:13px;font-weight:600;margin-top:2px;">${d.jobTitle}</div>` : ""}
+              ${d.company ? `<div style="color:#5b6478;font-size:12px;">${d.company}</div>` : ""}
+              <div style="color:#5b6478;font-size:12px;margin-top:8px;line-height:1.7;">
+                ${d.email ? `<div>${emailLink(d.email)}</div>` : ""}
+                ${d.phone ? `<div>${telLink(d.phone)}</div>` : ""}
+                ${d.website ? `<div>${link(d.website, d.website)}</div>` : ""}
+              </div>
+              ${socialIconsRow(d, { color: accent, size: 18 }) ? `<div style="margin-top:8px;">${socialIconsRow(d, { color: accent, size: 18 })}</div>` : ""}
+            </div>`,
+           "vertical-align:top;",
+         )}`,
+      ),
+    );
+  },
+  renderPlainText: renderDefaultPlainText,
+};
+
+// 7. Monogram Tile — auto-initials when no photo, never blank
+const monogramTileTpl: SignatureTemplate = {
+  id: "modern-monogram-tile",
+  name: "Monogram Tile",
+  category: "modern",
+  tags: ["monogram", "initials", "branded"],
+  description: "Square monogram tile auto-generated from your initials. Looks branded with no photo.",
+  supportsImage: false,
+  supportsLogo: false,
+  supportsSocialLinks: true,
+  layoutType: "two-column",
+  renderHtml: (d) => {
+    const accent = d.accentColor || accentDefault;
+    return table(
+      tr(
+        `${td(
+          monogramTile(d.fullName, { size: 64, color: accent, radius: 8 }),
+          "padding-right:14px;vertical-align:middle;width:64px;",
+        )}
+         ${td(
+           `<div style="font-family:${fontStack};">
+              <div style="font-size:15px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
+              ${d.jobTitle || d.company ? `<div style="color:#5b6478;font-size:12px;margin-top:2px;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
+              <div style="color:#5b6478;font-size:12px;margin-top:6px;">${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}</div>
+              ${socialTextLinks(d, accent) ? `<div style="margin-top:4px;font-size:12px;">${socialTextLinks(d, accent)}</div>` : ""}
+            </div>`,
+           "vertical-align:middle;",
+         )}`,
+      ),
+    );
+  },
+  renderPlainText: renderDefaultPlainText,
+};
+
+// 8. Horizontal Accent Bar — full-width thin colored bar above contact line
+const horizontalAccent: SignatureTemplate = {
+  id: "modern-horizontal-accent",
+  name: "Horizontal Accent Bar",
+  category: "modern",
+  tags: ["accent", "horizontal", "bar"],
+  description: "Name above a thin full-width accent bar, contact below.",
+  supportsImage: false,
+  supportsLogo: true,
+  supportsSocialLinks: false,
+  layoutType: "stacked",
+  renderHtml: (d) => {
+    const accent = d.accentColor || accentDefault;
+    const logo = getResolvedLogo(d);
+    return `<div style="font-family:${fontStack};max-width:460px;">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;">
+        <span style="font-size:18px;font-weight:700;color:#1a1f2e;letter-spacing:-0.3px;">${d.fullName}</span>
+        ${d.jobTitle ? `<span style="font-size:11px;color:#8a93a6;text-transform:uppercase;letter-spacing:1px;">${d.jobTitle}</span>` : ""}
+      </div>
+      <div style="height:3px;background:${accent};margin:6px 0 8px;border-radius:2px;"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;color:#5b6478;font-size:12px;line-height:1.6;">
+        <span>${join([d.company, emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}</span>
+        ${logo ? `<img src="${logo}" alt="${d.company}" height="20" style="display:inline-block;" />` : ""}
+      </div>
+    </div>`;
+  },
+  renderPlainText: renderDefaultPlainText,
+};
 
 export const modernTemplates: SignatureTemplate[] = [
   cardStyle,
@@ -209,4 +303,7 @@ export const modernTemplates: SignatureTemplate[] = [
   roundedLogo,
   twoColumnModern,
   socialRow,
+  photoLeftDivider,
+  monogramTileTpl,
+  horizontalAccent,
 ];

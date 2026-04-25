@@ -98,3 +98,38 @@ export function ctaButton(
   const radius = opts.radius ?? 6;
   return `<a href="${normalizeUrl(data.ctaUrl)}" style="display:inline-block;background:${color};color:${textColor};padding:8px 14px;border-radius:${radius}px;font-family:${fontStack};font-size:13px;font-weight:600;text-decoration:none;">${data.ctaLabel}</a>`;
 }
+
+/** Returns up to 2 initials from a name. Falls back to "•" if empty. */
+export function initials(name: string): string {
+  if (!name) return "•";
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "•";
+  if (parts.length === 1) return parts[0]!.charAt(0).toUpperCase();
+  return (parts[0]!.charAt(0) + parts[parts.length - 1]!.charAt(0)).toUpperCase();
+}
+
+/** Renders a square monogram tile with initials in the chosen color. */
+export function monogramTile(
+  name: string,
+  opts: { size?: number; color?: string; textColor?: string; radius?: number } = {},
+): string {
+  const size = opts.size || 56;
+  const color = opts.color || "#4f46e5";
+  const textColor = opts.textColor || "#ffffff";
+  const radius = opts.radius ?? 10;
+  return `<div style="display:inline-block;width:${size}px;height:${size}px;line-height:${size}px;text-align:center;background:${color};color:${textColor};font-family:${fontStack};font-size:${Math.round(size * 0.4)}px;font-weight:700;border-radius:${radius}px;letter-spacing:0.5px;">${initials(name)}</div>`;
+}
+
+/** Profile image with circular crop, falls back to monogram tile. */
+export function avatarOrMonogram(
+  data: SignatureData,
+  opts: { size?: number; color?: string; circle?: boolean } = {},
+): string {
+  const size = opts.size || 56;
+  const color = opts.color || "#4f46e5";
+  const radius = opts.circle === false ? 10 : Math.round(size / 2);
+  if (data.profileImageDataUrl) {
+    return `<img src="${data.profileImageDataUrl}" alt="${data.fullName}" width="${size}" height="${size}" style="display:block;border-radius:${radius}px;object-fit:cover;" />`;
+  }
+  return monogramTile(data.fullName, { size, color, radius });
+}

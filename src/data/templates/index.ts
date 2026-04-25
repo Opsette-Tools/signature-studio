@@ -5,7 +5,7 @@ import { corporateTemplates } from "./corporate";
 import { creativeTemplates } from "./creative";
 import { minimalTemplates } from "./minimal";
 import { modernTemplates } from "./modern";
-import { socialTemplates } from "./social";
+import { promotionalTemplates } from "./promotional";
 
 export const allTemplates: SignatureTemplate[] = [
   ...minimalTemplates,
@@ -14,7 +14,7 @@ export const allTemplates: SignatureTemplate[] = [
   ...boldTemplates,
   ...creativeTemplates,
   ...compactTemplates,
-  ...socialTemplates,
+  ...promotionalTemplates,
 ];
 
 export function getTemplateById(id: string): SignatureTemplate | undefined {

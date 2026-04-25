@@ -7,7 +7,7 @@ export type TemplateCategory =
   | "bold"
   | "creative"
   | "compact"
-  | "social";
+  | "promotional";
 
 export type LayoutType =
   | "stacked"
@@ -38,5 +38,5 @@ export const CATEGORY_LABELS: Record<TemplateCategory, string> = {
   bold: "Bold",
   creative: "Creative",
   compact: "Compact",
-  social: "Social / CTA",
+  promotional: "Promotional",
 };

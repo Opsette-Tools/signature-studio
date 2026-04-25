@@ -47,36 +47,13 @@ const friendlyCreator: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-// 2. Soft Rounded
-const softRounded: SignatureTemplate = {
-  id: "creative-soft-rounded",
-  name: "Soft Rounded",
-  category: "creative",
-  tags: ["soft", "rounded", "pastel"],
-  description: "Pastel background with rounded edges.",
-  supportsImage: false,
-  supportsLogo: true,
-  supportsSocialLinks: true,
-  layoutType: "card",
-  renderHtml: (d) => {
-    const accent = d.accentColor || "#06b6d4";
-    return `<div style="font-family:${fontStack};background:#f0f9ff;border-radius:18px;padding:14px 18px;max-width:460px;border:1px solid #bae6fd;">
-      <div style="font-size:15px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
-      ${d.jobTitle || d.company ? `<div style="color:${accent};font-size:12px;font-weight:600;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
-      <div style="color:#5b6478;font-size:12px;margin-top:6px;line-height:1.6;">${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}</div>
-      ${socialIconsRow(d, { color: accent }) ? `<div style="margin-top:8px;">${socialIconsRow(d, { color: accent })}</div>` : ""}
-    </div>`;
-  },
-  renderPlainText: renderDefaultPlainText,
-};
-
-// 3. Personal Brand
+// 2. Personal Brand
 const personalBrand: SignatureTemplate = {
   id: "creative-personal-brand",
   name: "Personal Brand",
   category: "creative",
   tags: ["personal", "brand", "creator"],
-  description: "Personality-forward with tagline and CTA.",
+  description: "Personality-forward with tagline and pill CTA.",
   supportsImage: true,
   supportsLogo: false,
   supportsSocialLinks: true,
@@ -98,7 +75,7 @@ const personalBrand: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-// 4. Portfolio Style
+// 3. Portfolio Style
 const portfolio: SignatureTemplate = {
   id: "creative-portfolio",
   name: "Portfolio Style",
@@ -122,7 +99,7 @@ const portfolio: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-// 5. Casual Service Provider
+// 4. Casual Service Provider
 const casualService: SignatureTemplate = {
   id: "creative-casual-service",
   name: "Casual Service Provider",
@@ -149,14 +126,112 @@ const casualService: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-void table;
-void td;
-void tr;
+// 5. Script Sign-Off — handwritten style closing
+const scriptSignOff: SignatureTemplate = {
+  id: "creative-script-sign-off",
+  name: "Script Sign-Off",
+  category: "creative",
+  tags: ["script", "handwritten", "sign-off"],
+  description: "Cursive sign-off above your details — feels personal and warm.",
+  supportsImage: false,
+  supportsLogo: false,
+  supportsSocialLinks: false,
+  layoutType: "stacked",
+  renderHtml: (d) => {
+    const accent = d.accentColor || "#a855f7";
+    return `<div style="font-family:${fontStack};">
+      <div style="font-family:'Brush Script MT','Lucida Handwriting',cursive;font-size:28px;color:${accent};line-height:1;">— ${d.fullName.split(" ")[0] || d.fullName}</div>
+      <div style="height:1px;background:#e6e8ee;margin:8px 0;width:120px;"></div>
+      <div style="font-size:13px;font-weight:600;color:#1a1f2e;">${d.fullName}</div>
+      ${d.jobTitle || d.company ? `<div style="color:#5b6478;font-size:12px;">${join([d.jobTitle, d.company], ", ")}</div>` : ""}
+      <div style="color:#5b6478;font-size:12px;margin-top:6px;">${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}</div>
+    </div>`;
+  },
+  renderPlainText: renderDefaultPlainText,
+};
+
+// 6. Sticker Badge — circular badge with bordered "stamp" feel
+const stickerBadge: SignatureTemplate = {
+  id: "creative-sticker-badge",
+  name: "Sticker Badge",
+  category: "creative",
+  tags: ["badge", "sticker", "playful"],
+  description: "Playful circular badge stamp paired with contact details.",
+  supportsImage: false,
+  supportsLogo: false,
+  supportsSocialLinks: true,
+  layoutType: "two-column",
+  renderHtml: (d) => {
+    const accent = d.accentColor || "#f97316";
+    const role = (d.jobTitle || "Hello").toUpperCase();
+    return table(
+      tr(
+        `${td(
+          `<div style="width:78px;height:78px;border-radius:50%;border:2px dashed ${accent};display:inline-block;text-align:center;line-height:1.1;padding:0;">
+              <div style="display:inline-block;margin-top:18px;font-family:${fontStack};font-size:10px;font-weight:800;color:${accent};text-transform:uppercase;letter-spacing:1px;">${role.slice(0, 14)}</div>
+              <div style="font-family:${fontStack};font-size:18px;font-weight:800;color:#1a1f2e;margin-top:2px;">★</div>
+            </div>`,
+          "padding-right:14px;vertical-align:middle;width:78px;",
+        )}
+         ${td(
+           `<div style="font-family:${fontStack};">
+              <div style="font-size:15px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
+              ${d.company ? `<div style="color:#5b6478;font-size:12px;">${d.company}</div>` : ""}
+              <div style="color:#5b6478;font-size:12px;margin-top:6px;">${join([emailLink(d.email), telLink(d.phone)])}</div>
+              ${socialIconsRow(d, { color: accent }) ? `<div style="margin-top:6px;">${socialIconsRow(d, { color: accent })}</div>` : ""}
+            </div>`,
+           "vertical-align:middle;",
+         )}`,
+      ),
+    );
+  },
+  renderPlainText: renderDefaultPlainText,
+};
+
+// 7. Polaroid Photo — bordered image with caption-style name
+const polaroidPhoto: SignatureTemplate = {
+  id: "creative-polaroid",
+  name: "Polaroid Photo",
+  category: "creative",
+  tags: ["polaroid", "photo", "frame"],
+  description: "Polaroid-framed photo with caption-style name underneath.",
+  supportsImage: true,
+  supportsLogo: false,
+  supportsSocialLinks: true,
+  layoutType: "two-column",
+  renderHtml: (d) => {
+    const accent = d.accentColor || "#ec4899";
+    const profile = d.profileImageDataUrl;
+    const polaroid = profile
+      ? `<div style="background:#fff;border:1px solid #e6e8ee;padding:6px 6px 22px;display:inline-block;box-shadow:0 2px 6px rgba(0,0,0,0.08);transform:rotate(-2deg);">
+          <img src="${profile}" alt="${d.fullName}" width="72" height="72" style="display:block;object-fit:cover;" />
+          <div style="font-family:'Brush Script MT','Lucida Handwriting',cursive;font-size:14px;color:#5b6478;text-align:center;margin-top:4px;line-height:1;">${d.fullName.split(" ")[0] || ""}</div>
+        </div>`
+      : `<div style="background:#fff;border:1px solid #e6e8ee;padding:6px 6px 22px;display:inline-block;width:72px;height:72px;text-align:center;line-height:72px;color:#cbd2dc;font-size:24px;transform:rotate(-2deg);">📷</div>`;
+    return table(
+      tr(
+        `${td(polaroid, "padding-right:18px;vertical-align:middle;width:90px;")}
+         ${td(
+           `<div style="font-family:${fontStack};">
+              <div style="font-size:15px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
+              ${d.jobTitle || d.company ? `<div style="color:${accent};font-size:12px;font-weight:600;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
+              <div style="color:#5b6478;font-size:12px;margin-top:6px;">${join([emailLink(d.email), link(d.website, d.website)])}</div>
+              ${socialTextLinks(d, accent) ? `<div style="margin-top:4px;font-size:12px;">${socialTextLinks(d, accent)}</div>` : ""}
+            </div>`,
+           "vertical-align:middle;",
+         )}`,
+      ),
+    );
+  },
+  renderPlainText: renderDefaultPlainText,
+};
 
 export const creativeTemplates: SignatureTemplate[] = [
   friendlyCreator,
-  softRounded,
   personalBrand,
   portfolio,
   casualService,
+  scriptSignOff,
+  stickerBadge,
+  polaroidPhoto,
 ];
