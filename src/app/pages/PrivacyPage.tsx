@@ -1,6 +1,7 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Button, Card, Typography } from "antd";
 import { Link } from "react-router-dom";
+import { OpsetteFooterLogo } from "@/components/opsette-share";
 
 const { Title, Paragraph } = Typography;
 
@@ -42,6 +43,8 @@ export function PrivacyPage() {
           <strong>No data is sold or shared.</strong> Since we don't collect any data, there is
           nothing to sell or share with third parties.
         </Paragraph>
+
+        <OpsetteFooterLogo />
       </Card>
     </div>
   );

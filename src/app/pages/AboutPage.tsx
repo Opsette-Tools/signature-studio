@@ -1,8 +1,9 @@
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { Button, Card, Typography } from "antd";
 import { Link } from "react-router-dom";
+import { OpsetteFooterLogo } from "@/components/opsette-share";
 
-const { Title, Paragraph, Link: AntLink } = Typography;
+const { Title, Paragraph } = Typography;
 
 export function AboutPage() {
   return (
@@ -40,13 +41,7 @@ export function AboutPage() {
           stored locally — nothing is sent to any server.
         </Paragraph>
 
-        <Paragraph style={{ fontSize: 12, marginTop: 8 }}>
-          Find more tools at{" "}
-          <AntLink href="https://opsette.io" target="_blank" rel="noopener noreferrer">
-            opsette.io
-          </AntLink>
-          .
-        </Paragraph>
+        <OpsetteFooterLogo />
       </Card>
     </div>
   );

@@ -3,6 +3,7 @@ import { Alert, Button, Input, Modal, Space, Tabs, Tag, Tooltip, message } from 
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useMemo, useState } from "react";
 import type { SignatureData } from "@/types/signature";
+import { ShareAppModal } from "@/components/opsette-share";
 import {
   PERSONAL_FIELDS,
   SHARED_FIELDS,
@@ -51,6 +52,7 @@ export function ShareModal({ open, onClose, data, templateId }: Props) {
   const [mode, setMode] = useState<ShareMode>("kit");
   // Default ON for kit mode — shipping a base64 logo over a brand-kit link almost always blows past Outlook URL limits.
   const [stripLogoData, setStripLogoData] = useState(true);
+  const [shareAppOpen, setShareAppOpen] = useState(false);
 
   useEffect(() => {
     if (open) {
@@ -235,7 +237,15 @@ export function ShareModal({ open, onClose, data, templateId }: Props) {
             </p>
           </div>
         ) : null}
+
+        <div style={{ borderTop: "1px solid var(--color-border, #eee)", paddingTop: 12, marginTop: 4, textAlign: "center" }}>
+          <Button type="link" size="small" onClick={() => setShareAppOpen(true)}>
+            Or share the Signature Studio app itself →
+          </Button>
+        </div>
       </div>
+
+      <ShareAppModal open={shareAppOpen} onClose={() => setShareAppOpen(false)} />
     </Modal>
   );
 }
