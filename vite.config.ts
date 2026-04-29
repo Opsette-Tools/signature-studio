@@ -14,26 +14,10 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["icons/icon.svg", "favicon.ico", "robots.txt"],
-      manifest: {
-        name: "Signature Studio — Email Signature Generator",
-        short_name: "Signature Studio",
-        description:
-          "Build polished email signatures locally on your device. Browse 35+ templates, fill in your details, and copy as rich HTML or plain text. No accounts, no tracking.",
-        start_url: "/signature-studio/",
-        scope: "/signature-studio/",
-        display: "standalone",
-        orientation: "portrait",
-        background_color: "#0f1218",
-        theme_color: "#4f46e5",
-        icons: [
-          {
-            src: "icons/icon.svg",
-            sizes: "any",
-            type: "image/svg+xml",
-            purpose: "any maskable",
-          },
-        ],
+      devOptions: { enabled: false },
+      manifest: false,
+      workbox: {
+        navigateFallback: "index.html",
       },
     }),
   ],

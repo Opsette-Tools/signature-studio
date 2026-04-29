@@ -1,0 +1,15 @@
+{
+  "name": "Signature Studio — Opsette",
+  "short_name": "Signature",
+  "description": "Design polished email signatures.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#fafafa",
+  "theme_color": "#2f4f46",
+  "categories": ["productivity", "business"],
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
