@@ -6,6 +6,7 @@ import { ShareModal } from "@/components/signature/ShareModal";
 import { useThemeMode } from "@/hooks/useThemeMode";
 import { useLocalSignatures } from "@/hooks/useLocalSignatures";
 import { useSignatureContext } from "@/app/SignatureContext";
+import { OpsetteHeader } from "@/components/opsette-header";
 
 export function HeaderBar() {
   const { mode, toggle } = useThemeMode();
@@ -13,51 +14,45 @@ export function HeaderBar() {
   const { data, update, selectedTemplateId } = useSignatureContext();
   const [shareOpen, setShareOpen] = useState(false);
 
-  return (
-    <header className="app-header">
-      <Link to="/" className="app-header__brand">
-        <span className="app-header__brand-mark">@</span>
-        <span>Signature Studio</span>
-      </Link>
-      <div className="app-header__actions">
-        <Tooltip title="Accent color (used by some templates)">
-          <label className="accent-swatch" aria-label="Accent color">
-            <input
-              type="color"
-              value={data.accentColor}
-              onChange={(e) => update("accentColor", e.target.value)}
-            />
-            <span
-              className="accent-swatch__dot"
-              style={{ background: data.accentColor }}
-              aria-hidden
-            />
-          </label>
-        </Tooltip>
-        <Tooltip title="Browse all templates">
-          <Link to="/templates">
-            <Button type="text" icon={<AppstoreOutlined />} />
-          </Link>
-        </Tooltip>
-        <Badge count={items.length} size="small" offset={[-4, 4]} color="var(--color-primary)">
-          <Link to="/saved">
-            <Button type="text">Saved</Button>
-          </Link>
-        </Badge>
-        <Tooltip title="Share signature">
-          <Button icon={<ShareAltOutlined />} onClick={() => setShareOpen(true)}>
-            Share
-          </Button>
-        </Tooltip>
-        <Tooltip title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}>
-          <Button
-            type="text"
-            icon={mode === "dark" ? <SunOutlined /> : <MoonOutlined />}
-            onClick={toggle}
-            aria-label="Toggle theme"
+  const rightExtra = (
+    <>
+      <Tooltip title="Accent color (used by some templates)">
+        <label className="accent-swatch" aria-label="Accent color">
+          <input
+            type="color"
+            value={data.accentColor}
+            onChange={(e) => update("accentColor", e.target.value)}
           />
-        </Tooltip>
-      </div>
+          <span
+            className="accent-swatch__dot"
+            style={{ background: data.accentColor }}
+            aria-hidden
+          />
+        </label>
+      </Tooltip>
+      <Tooltip title="Browse all templates">
+        <Link to="/templates">
+          <Button type="text" icon={<AppstoreOutlined />} />
+        </Link>
+      </Tooltip>
+      <Badge count={items.length} size="small" offset={[-4, 4]} color="var(--color-primary)">
+        <Link to="/saved">
+          <Button type="text">Saved</Button>
+        </Link>
+      </Badge>
+      <Tooltip title="Share signature">
+        <Button icon={<ShareAltOutlined />} onClick={() => setShareOpen(true)}>
+          Share
+        </Button>
+      </Tooltip>
+      <Tooltip title={mode === "dark" ? "Switch to light mode" : "Switch to dark mode"}>
+        <Button
+          type="text"
+          icon={mode === "dark" ? <SunOutlined /> : <MoonOutlined />}
+          onClick={toggle}
+          aria-label="Toggle theme"
+        />
+      </Tooltip>
 
       <ShareModal
         open={shareOpen}
@@ -65,6 +60,8 @@ export function HeaderBar() {
         data={data}
         templateId={selectedTemplateId}
       />
-    </header>
+    </>
   );
+
+  return <OpsetteHeader theme={mode === "dark" ? "dark" : "light"} rightExtra={rightExtra} />;
 }
