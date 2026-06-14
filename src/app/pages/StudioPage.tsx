@@ -2,6 +2,7 @@ import { AppstoreOutlined, CopyOutlined, EyeOutlined } from "@ant-design/icons";
 import { Drawer, Grid } from "antd";
 import { useState } from "react";
 import { CopyPanel } from "@/components/signature/CopyPanel";
+import { DemoBanner } from "@/components/signature/DemoBanner";
 import { SavedSignatures } from "@/components/signature/SavedSignatures";
 import { SignatureForm } from "@/components/signature/SignatureForm";
 import { SignaturePreview } from "@/components/signature/SignaturePreview";
@@ -63,6 +64,7 @@ export function StudioPage() {
 
   return (
     <div className="studio">
+      <DemoBanner />
       <TemplateStrip
         data={data}
         selectedId={selectedTemplateId}

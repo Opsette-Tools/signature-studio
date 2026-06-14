@@ -101,22 +101,28 @@ const boxedInitials: SignatureTemplate = {
   renderPlainText: renderDefaultPlainText,
 };
 
-// 5. Mobile Reply — small caps, italic prefix for mobile replies
-const mobileReply: SignatureTemplate = {
+// 5. Mobile Tap — compact, thumb-friendly signature for phone sending
+const mobileTap: SignatureTemplate = {
   id: "compact-mobile-reply",
-  name: "Mobile Reply",
+  name: "Mobile Tap",
   category: "compact",
-  tags: ["mobile", "reply", "tiny"],
-  description: "Italic prefix + muted small-caps signature, purpose-built for mobile replies.",
+  tags: ["mobile", "compact", "tap"],
+  description: "Tiny thumb-friendly signature — bold name, role, and one-tap phone/email. Built for sending from your phone.",
   supportsImage: false,
   supportsLogo: false,
   supportsSocialLinks: false,
   layoutType: "stacked",
   renderHtml: (d) => {
-    return `<div style="font-family:${fontStack};color:#8a93a6;font-size:11px;line-height:1.5;">
-      <div style="font-style:italic;">Sent from my phone — please excuse brevity.</div>
-      <div style="font-variant:small-caps;letter-spacing:0.5px;color:#5b6478;margin-top:2px;">
-        ${d.fullName}${d.company ? `, ${d.company}` : ""}${d.phone ? ` · ${telLink(d.phone, "color:#5b6478;")}` : ""}
+    const accent = d.accentColor || "#4f46e5";
+    const tap = (label: string, href: string) =>
+      `<a href="${href}" style="display:inline-block;color:${accent};font-size:12px;font-weight:600;text-decoration:none;padding:2px 0;margin-right:14px;">${label}</a>`;
+    const digits = d.phone.replace(/[^+\d]/g, "");
+    return `<div style="font-family:${fontStack};line-height:1.4;">
+      <div style="font-size:13px;font-weight:700;color:#1a1f2e;">${d.fullName}${d.jobTitle ? ` <span style="color:#8a93a6;font-weight:400;">· ${d.jobTitle}</span>` : ""}</div>
+      ${d.company ? `<div style="font-size:11px;color:#5b6478;margin-top:1px;">${d.company}</div>` : ""}
+      <div style="margin-top:4px;">
+        ${d.phone ? tap("Call", `tel:${digits}`) : ""}
+        ${d.email ? tap("Email", `mailto:${d.email}`) : ""}
       </div>
     </div>`;
   },
@@ -128,5 +134,5 @@ export const compactTemplates: SignatureTemplate[] = [
   verticalStripe,
   bracketFrame,
   boxedInitials,
-  mobileReply,
+  mobileTap,
 ];

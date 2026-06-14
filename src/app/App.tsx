@@ -1,6 +1,6 @@
 import { App as AntApp, ConfigProvider, theme } from "antd";
 import { BrowserRouter } from "react-router-dom";
-import { useThemeMode } from "@/hooks/useThemeMode";
+import { ThemeProvider, useThemeMode } from "@/hooks/useThemeMode";
 import { AppRoutes } from "./routes";
 import { SignatureProvider } from "./SignatureContext";
 
@@ -32,5 +32,9 @@ function ThemedApp() {
 }
 
 export default function App() {
-  return <ThemedApp />;
+  return (
+    <ThemeProvider>
+      <ThemedApp />
+    </ThemeProvider>
+  );
 }

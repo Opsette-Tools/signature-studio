@@ -58,31 +58,22 @@ export function SignatureForm({ data, onChange }: Props) {
           key: "media",
           label: "Media",
           children: (
-            <SectionCard hint="Logo URL is recommended for best email-client compatibility. Uploaded images are stored locally as base64 and may be stripped by some clients.">
+            <SectionCard hint="Images must already be online — paste a link to one. This keeps your signature tiny and prevents Gmail from clipping it (an embedded image would bloat it 10×).">
               <Form layout="vertical">
-                <Form.Item label="Logo URL" style={{ marginBottom: 12 }}>
-                  <Input
-                    value={data.logoUrl}
-                    placeholder="https://your-cdn.com/logo.png"
-                    onChange={(e) => onChange("logoUrl", e.target.value)}
-                  />
-                </Form.Item>
-                <Form.Item label="Logo (local upload or URL)" style={{ marginBottom: 12 }}>
+                <Form.Item label="Logo" style={{ marginBottom: 12 }}>
                   <ImageUploader
-                    value={data.logoDataUrl}
-                    onChange={(v) => onChange("logoDataUrl", v)}
-                    label="Choose logo"
-                    preset="logo"
-                    hint="Used only if no Logo URL above is set."
+                    value={data.logoUrl}
+                    onChange={(v) => onChange("logoUrl", v)}
+                    label="Logo URL"
+                    hint="Your logo is usually already on your website — paste that link."
                   />
                 </Form.Item>
-                <Form.Item label="Profile photo (local upload or URL)" style={{ marginBottom: 12 }}>
+                <Form.Item label="Profile photo" style={{ marginBottom: 12 }}>
                   <ImageUploader
                     value={data.profileImageDataUrl}
                     onChange={(v) => onChange("profileImageDataUrl", v)}
-                    label="Choose photo"
-                    preset="profile"
-                    hint="Square photos work best."
+                    label="Photo URL"
+                    hint="A link to a square photo works best (e.g. your LinkedIn photo URL)."
                   />
                 </Form.Item>
               </Form>

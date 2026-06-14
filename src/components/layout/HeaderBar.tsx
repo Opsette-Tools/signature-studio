@@ -1,4 +1,10 @@
-import { AppstoreOutlined, MoonOutlined, ShareAltOutlined, SunOutlined } from "@ant-design/icons";
+import {
+  AppstoreOutlined,
+  ExperimentOutlined,
+  MoonOutlined,
+  ShareAltOutlined,
+  SunOutlined,
+} from "@ant-design/icons";
 import { Badge, Button, Tooltip } from "antd";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -11,7 +17,7 @@ import { OpsetteHeader } from "@/components/opsette-header";
 export function HeaderBar() {
   const { mode, toggle } = useThemeMode();
   const { items } = useLocalSignatures();
-  const { data, update, selectedTemplateId } = useSignatureContext();
+  const { data, update, selectedTemplateId, isDemo, loadDemo } = useSignatureContext();
   const [shareOpen, setShareOpen] = useState(false);
 
   const rightExtra = (
@@ -30,6 +36,13 @@ export function HeaderBar() {
           />
         </label>
       </Tooltip>
+      {!isDemo && (
+        <Tooltip title="Fill the form with sample data to preview templates">
+          <Button type="text" icon={<ExperimentOutlined />} onClick={loadDemo}>
+            Try demo
+          </Button>
+        </Tooltip>
+      )}
       <Tooltip title="Browse all templates">
         <Link to="/templates">
           <Button type="text" icon={<AppstoreOutlined />} />

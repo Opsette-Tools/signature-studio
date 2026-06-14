@@ -10,6 +10,12 @@ export type SignatureCtxValue = {
   selectedTemplateId: string;
   setSelectedTemplateId: (id: string) => void;
   selectedTemplate: SignatureTemplate | undefined;
+  /** True while the form is populated with demo data (drives the demo banner). */
+  isDemo: boolean;
+  /** Load editable sample data into the form so templates can be previewed. */
+  loadDemo: () => void;
+  /** Clear demo data back to an empty form. */
+  clearDemo: () => void;
 };
 
 export const SignatureCtx = createContext<SignatureCtxValue | null>(null);

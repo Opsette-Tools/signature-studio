@@ -6,6 +6,7 @@ import {
   join,
   link,
   logoImg,
+  monogramTile,
   socialIconsRow,
   socialTextLinks,
   table,
@@ -30,14 +31,18 @@ const friendlyCreator: SignatureTemplate = {
   renderHtml: (d) => {
     const accent = d.accentColor || "#ec4899";
     const profile = d.profileImageDataUrl;
+    const avatar = profile
+      ? `<img src="${profile}" alt="${d.fullName}" width="60" height="60" style="border-radius:50%;display:block;border:2px solid ${accent};" />`
+      : monogramTile(d.fullName, { size: 60, color: accent, radius: 30 });
     return table(
       tr(
-        `${profile ? td(`<img src="${profile}" alt="${d.fullName}" width="64" height="64" style="border-radius:50%;display:block;border:2px solid ${accent};" />`, "padding-right:14px;vertical-align:middle;") : ""}
+        `${td(avatar, "padding-right:16px;vertical-align:middle;width:60px;")}
          ${td(
            `<div style="font-family:${fontStack};">
-              <div style="font-size:15px;font-weight:700;color:#1a1f2e;">Hi, I'm ${d.fullName} 👋</div>
-              ${d.tagline ? `<div style="color:${accent};font-size:13px;font-style:italic;margin-top:2px;">"${d.tagline}"</div>` : d.jobTitle ? `<div style="color:#5b6478;font-size:12px;margin-top:2px;">${d.jobTitle}</div>` : ""}
-              <div style="color:#5b6478;font-size:12px;margin-top:6px;">${join([emailLink(d.email), link(d.website, d.website)])}</div>
+              <div style="font-size:16px;font-weight:700;color:#1a1f2e;">Hi, I'm ${d.fullName} 👋</div>
+              ${d.jobTitle || d.company ? `<div style="color:#5b6478;font-size:12px;margin-top:2px;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
+              ${d.tagline ? `<div style="color:${accent};font-size:13px;font-weight:600;margin-top:6px;line-height:1.4;">${d.tagline}</div>` : ""}
+              <div style="color:#8a93a6;font-size:12px;margin-top:8px;line-height:1.6;">${join([emailLink(d.email), link(d.website, d.website)])}</div>
               ${socialTextLinks(d, accent) ? `<div style="margin-top:6px;font-size:12px;">${socialTextLinks(d, accent)}</div>` : ""}
             </div>`,
            "vertical-align:middle;",
@@ -114,14 +119,23 @@ const casualService: SignatureTemplate = {
   renderHtml: (d) => {
     const accent = d.accentColor || "#10b981";
     const logo = getResolvedLogo(d);
+    const nameRow = logo
+      ? `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;"><tr>
+          <td style="padding-right:10px;vertical-align:middle;">${logoImg(logo, d.company || d.fullName, { height: 36, radius: 8 })}</td>
+          <td style="vertical-align:middle;">
+            <div style="font-size:15px;font-weight:700;color:#1a1f2e;line-height:1.2;">${d.fullName}</div>
+            ${d.jobTitle || d.company ? `<div style="color:#5b6478;font-size:12px;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
+          </td>
+        </tr></table>`
+      : `<div>
+          <div style="font-size:15px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
+          ${d.jobTitle || d.company ? `<div style="color:#5b6478;font-size:12px;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
+        </div>`;
     return `<div style="font-family:${fontStack};">
-      <div style="display:flex;align-items:center;gap:8px;">
-        ${logo ? logoImg(logo, d.company || d.fullName, { height: 32, radius: 6 }) : ""}
-        <span style="font-size:14px;font-weight:700;color:#1a1f2e;vertical-align:middle;">${d.fullName}</span>
-      </div>
-      ${d.tagline ? `<div style="color:${accent};font-size:12px;margin-top:4px;font-weight:500;">${d.tagline}</div>` : ""}
+      ${nameRow}
+      ${d.tagline ? `<div style="color:${accent};font-size:12px;margin-top:6px;font-weight:600;">${d.tagline}</div>` : ""}
       <div style="color:#5b6478;font-size:12px;margin-top:6px;line-height:1.6;">${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}</div>
-      ${d.bookingLink ? `<div style="margin-top:8px;font-size:12px;">→ <a href="${d.bookingLink.startsWith("http") ? d.bookingLink : "https://" + d.bookingLink}" style="color:${accent};font-weight:600;">${d.ctaLabel || "Book a free chat"}</a></div>` : ""}
+      ${d.bookingLink ? `<div style="margin-top:10px;"><a href="${d.bookingLink.startsWith("http") ? d.bookingLink : "https://" + d.bookingLink}" style="display:inline-block;border:1.5px solid ${accent};color:${accent};font-weight:600;font-size:12px;text-decoration:none;padding:6px 14px;border-radius:6px;">${d.ctaLabel || "Book a free chat"}</a></div>` : ""}
     </div>`;
   },
   renderPlainText: renderDefaultPlainText,
@@ -204,11 +218,14 @@ const polaroidPhoto: SignatureTemplate = {
     const accent = d.accentColor || "#ec4899";
     const profile = d.profileImageDataUrl;
     const polaroid = profile
-      ? `<div style="background:#fff;border:1px solid #e6e8ee;padding:6px 6px 22px;display:inline-block;box-shadow:0 2px 6px rgba(0,0,0,0.08);transform:rotate(-2deg);">
-          <img src="${profile}" alt="${d.fullName}" width="72" height="72" style="display:block;object-fit:cover;" />
-          <div style="font-family:'Brush Script MT','Lucida Handwriting',cursive;font-size:14px;color:#5b6478;text-align:center;margin-top:4px;line-height:1;">${d.fullName.split(" ")[0] || ""}</div>
+      ? `<div style="background:#fff;border:1px solid #d8dce4;padding:7px 7px 24px;display:inline-block;">
+          <img src="${profile}" alt="${d.fullName}" width="72" height="72" style="display:block;width:72px;height:72px;" />
+          <div style="font-family:'Brush Script MT','Lucida Handwriting',cursive;font-size:15px;color:#5b6478;text-align:center;margin-top:6px;line-height:1;">${d.fullName.split(" ")[0] || ""}</div>
         </div>`
-      : `<div style="background:#fff;border:1px solid #e6e8ee;padding:6px 6px 22px;display:inline-block;width:72px;height:72px;text-align:center;line-height:72px;color:#cbd2dc;font-size:24px;transform:rotate(-2deg);">📷</div>`;
+      : `<div style="background:#fff;border:1px solid #d8dce4;padding:7px 7px 24px;display:inline-block;width:72px;text-align:center;">
+          <div style="width:72px;height:72px;line-height:72px;background:#f4f5f8;color:#cbd2dc;font-size:13px;font-weight:700;letter-spacing:1px;">PHOTO</div>
+          <div style="font-family:'Brush Script MT','Lucida Handwriting',cursive;font-size:15px;color:#cbd2dc;margin-top:6px;line-height:1;">${d.fullName.split(" ")[0] || ""}</div>
+        </div>`;
     return table(
       tr(
         `${td(polaroid, "padding-right:18px;vertical-align:middle;width:90px;")}

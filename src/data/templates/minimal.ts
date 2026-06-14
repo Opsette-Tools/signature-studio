@@ -57,18 +57,22 @@ const simpleDivider: SignatureTemplate = {
   layoutType: "stacked",
   renderHtml: (d) => {
     const accent = d.accentColor || accentDefault;
+    const serif = "Georgia, 'Times New Roman', serif";
+    const namePronouns = join([d.fullName, d.pronouns && `(${d.pronouns})`], " ");
+    const titleCompany = join([d.jobTitle, d.company], ", ");
+    const contact = join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)]);
     return table(
       `${tr(
         td(
-          `<div style="font-family:${fontStack};font-size:15px;font-weight:600;color:#1a1f2e;padding-bottom:6px;">${join([d.fullName, d.pronouns && `(${d.pronouns})`], " ")}</div>`,
+          `<div style="font-family:${serif};font-size:21px;font-weight:400;color:#1a1f2e;letter-spacing:0.2px;line-height:1.25;padding-bottom:10px;">${namePronouns}</div>`,
         ),
       )}
-       ${tr(td(`<div style="border-top:1px solid ${accent};width:48px;height:1px;line-height:1px;"></div>`))}
+       ${tr(td(`<div style="border-top:1px solid ${accent};width:36px;height:1px;line-height:1px;font-size:0;">&nbsp;</div>`))}
        ${tr(
          td(
-           `<div style="font-family:${fontStack};color:#5b6478;font-size:13px;line-height:1.6;padding-top:6px;">
-             ${d.jobTitle ? `<div>${d.jobTitle}${d.company ? `, ${d.company}` : ""}</div>` : d.company ? `<div>${d.company}</div>` : ""}
-             ${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)]) ? `<div>${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}</div>` : ""}
+           `<div style="font-family:${fontStack};padding-top:10px;">
+             ${titleCompany ? `<div style="color:#5b6478;font-size:11px;text-transform:uppercase;letter-spacing:1.4px;font-weight:600;">${titleCompany}</div>` : ""}
+             ${contact ? `<div style="color:#8a93a6;font-size:13px;line-height:1.7;margin-top:8px;">${contact}</div>` : ""}
            </div>`,
          ),
        )}`,

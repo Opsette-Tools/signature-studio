@@ -1,13 +1,5 @@
-import { LinkOutlined, UploadOutlined } from "@ant-design/icons";
-import { Button, Input, message, Segmented, Upload } from "antd";
-import type { UploadProps } from "antd";
+import { Button, Input, message } from "antd";
 import { useState } from "react";
-import {
-  byteSizeOfDataUrl,
-  LOGO_PRESET,
-  PROFILE_PRESET,
-  resizeImage,
-} from "@/utils/imageToBase64";
 
 type Props = {
   value: string;
@@ -17,35 +9,18 @@ type Props = {
   preset?: "profile" | "logo";
 };
 
-export function ImageUploader({
-  value,
-  onChange,
-  label = "Upload image",
-  hint,
-  preset = "profile",
-}: Props) {
-  const [mode, setMode] = useState<"upload" | "url">(
-    value.startsWith("http") ? "url" : "upload",
-  );
+/**
+ * Image input — URL only, by design.
+ *
+ * This is a standalone, backend-free tool: there is nowhere to host an uploaded
+ * file, so embedding one inline (base64) would balloon the signature to 10+ KB
+ * and get it clipped by Gmail. So we deliberately DON'T offer file upload — the
+ * image must already live at a public URL (a company site, a CDN, Drive "anyone
+ * with link", etc.). A hosted `<img src="https://…">` weighs ~60 bytes in the
+ * signature regardless of the real image size, exactly how WiseStamp et al. do it.
+ */
+export function ImageUploader({ value, onChange, label = "Image URL", hint }: Props) {
   const [urlInput, setUrlInput] = useState(value.startsWith("http") ? value : "");
-
-  const resizePreset = preset === "logo" ? LOGO_PRESET : PROFILE_PRESET;
-
-  const props: UploadProps = {
-    accept: "image/*",
-    showUploadList: false,
-    beforeUpload: async (file) => {
-      try {
-        const dataUrl = await resizeImage(file, resizePreset);
-        onChange(dataUrl);
-        const kb = Math.round(byteSizeOfDataUrl(dataUrl) / 1024);
-        message.success(`Auto-resized for email compatibility (~${kb} KB)`);
-      } catch {
-        message.error("Could not read image");
-      }
-      return false; // prevent network upload
-    },
-  };
 
   const applyUrl = () => {
     const trimmed = urlInput.trim();
@@ -69,74 +44,36 @@ export function ImageUploader({
         aria-label="Image preview"
       />
       <div className="stack-sm" style={{ flex: 1, minWidth: 0 }}>
-        <Segmented
-          size="small"
-          value={mode}
-          onChange={(v) => setMode(v as "upload" | "url")}
-          options={[
-            { label: "Upload", value: "upload", icon: <UploadOutlined /> },
-            { label: "Paste URL", value: "url", icon: <LinkOutlined /> },
-          ]}
-        />
-        {mode === "upload" ? (
-          <div className="row">
-            <Upload {...props}>
-              <Button icon={<UploadOutlined />} size="small">
-                {label}
-              </Button>
-            </Upload>
-            {value ? (
-              <Button
-                size="small"
-                type="text"
-                danger
-                onClick={() => {
-                  onChange("");
-                  setUrlInput("");
-                }}
-              >
-                Remove
-              </Button>
-            ) : null}
-          </div>
-        ) : (
-          <div className="row">
-            <Input
+        <div className="row">
+          <Input
+            size="small"
+            placeholder="https://your-site.com/logo.png"
+            value={urlInput}
+            onChange={(e) => setUrlInput(e.target.value)}
+            onPressEnter={applyUrl}
+            aria-label={label}
+            style={{ flex: 1 }}
+          />
+          <Button size="small" onClick={applyUrl}>
+            Set
+          </Button>
+          {value ? (
+            <Button
               size="small"
-              placeholder="https://your-cdn.com/image.png"
-              value={urlInput}
-              onChange={(e) => setUrlInput(e.target.value)}
-              onPressEnter={applyUrl}
-              style={{ flex: 1 }}
-            />
-            <Button size="small" onClick={applyUrl}>
-              Set
+              type="text"
+              danger
+              onClick={() => {
+                onChange("");
+                setUrlInput("");
+              }}
+            >
+              Remove
             </Button>
-            {value ? (
-              <Button
-                size="small"
-                type="text"
-                danger
-                onClick={() => {
-                  onChange("");
-                  setUrlInput("");
-                }}
-              >
-                Remove
-              </Button>
-            ) : null}
-          </div>
-        )}
-        {hint ? <small style={{ color: "var(--color-text-muted)" }}>{hint}</small> : null}
-        {mode === "upload" ? (
-          <small style={{ color: "var(--color-text-muted)" }}>
-            Uploaded images are auto-resized to keep your signature under email-client limits.
-          </small>
-        ) : (
-          <small style={{ color: "var(--color-text-muted)" }}>
-            Hosted URLs keep your signature smallest and most compatible.
-          </small>
-        )}
+          ) : null}
+        </div>
+        <small style={{ color: "var(--color-text-muted)" }}>
+          {hint ?? "Paste a link to an image that's already online (your website, a CDN, etc.) — keeps your signature small and Gmail-safe."}
+        </small>
       </div>
     </div>
   );

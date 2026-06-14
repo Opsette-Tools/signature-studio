@@ -1,7 +1,8 @@
-import { useState, type ReactNode } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import { allTemplates } from "@/data/templates";
 import { useSignatureForm } from "@/hooks/useSignatureForm";
 import { readString, storageKeys, writeString } from "@/utils/storage";
+import { sampleSignatureData } from "@/types/signature";
 import { SignatureCtx } from "./signatureContextValue";
 
 export { useSignatureContext } from "./signatureContextValue";
@@ -17,11 +18,22 @@ function loadInitialId(): string {
 export function SignatureProvider({ children }: { children: ReactNode }) {
   const { data, update, replaceAll, reset } = useSignatureForm();
   const [selectedTemplateId, setSelectedTemplateIdState] = useState<string>(() => loadInitialId());
+  const [isDemo, setIsDemo] = useState(false);
 
   const setSelectedTemplateId = (id: string) => {
     setSelectedTemplateIdState(id);
     writeString(storageKeys.selectedTemplate, id);
   };
+
+  const loadDemo = useCallback(() => {
+    replaceAll(sampleSignatureData);
+    setIsDemo(true);
+  }, [replaceAll]);
+
+  const clearDemo = useCallback(() => {
+    reset();
+    setIsDemo(false);
+  }, [reset]);
 
   const selectedTemplate = allTemplates.find((t) => t.id === selectedTemplateId);
 
@@ -35,6 +47,9 @@ export function SignatureProvider({ children }: { children: ReactNode }) {
         selectedTemplateId,
         setSelectedTemplateId,
         selectedTemplate,
+        isDemo,
+        loadDemo,
+        clearDemo,
       }}
     >
       {children}

@@ -73,6 +73,33 @@ export function join(parts: (string | false | null | undefined)[], sep = " · ")
   return parts.filter((v): v is string => Boolean(v && v.trim())).join(sep);
 }
 
+/**
+ * A horizontal header bar with content on the left and an optional accessory
+ * (logo, role chip, etc.) pinned to the right, vertically centered.
+ *
+ * Built as a 100%-width table — NOT flexbox. Gmail strips flex sub-properties
+ * (align-items/justify-content), which silently collapses any flex header into a
+ * broken left stack. A two-cell table with `text-align:right` on the accessory is
+ * the only layout that survives every major client. Use this anywhere you'd reach
+ * for `display:flex;justify-content:space-between`.
+ */
+export function headerBar(
+  leftHtml: string,
+  rightHtml: string,
+  opts: { background?: string; padding?: string; radius?: string; border?: string } = {},
+): string {
+  const bg = opts.background ? `background:${opts.background};` : "";
+  const pad = opts.padding ?? "12px 16px";
+  const radius = opts.radius ? `border-radius:${opts.radius};` : "";
+  const border = opts.border ? `border:${opts.border};` : "";
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;width:100%;${bg}${radius}${border}">
+    <tr>
+      <td style="padding:${pad};vertical-align:middle;text-align:left;">${leftHtml}</td>
+      ${rightHtml ? `<td style="padding:${pad};vertical-align:middle;text-align:right;white-space:nowrap;">${rightHtml}</td>` : ""}
+    </tr>
+  </table>`;
+}
+
 export function socialIconsRow(
   data: SignatureData,
   opts: { color?: string; size?: number } = {},

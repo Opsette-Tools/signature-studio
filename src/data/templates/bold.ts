@@ -2,6 +2,7 @@ import type { SignatureTemplate } from "@/types/template";
 import {
   emailLink,
   fontStack,
+  headerBar,
   join,
   link,
   logoImg,
@@ -25,10 +26,11 @@ const bigName: SignatureTemplate = {
   renderHtml: (d) => {
     const accent = d.accentColor || "#4f46e5";
     return `<div style="font-family:${fontStack};">
-      <div style="font-size:24px;font-weight:800;color:#1a1f2e;line-height:1.1;letter-spacing:-0.5px;">${d.fullName}</div>
-      ${d.jobTitle || d.company ? `<div style="color:${accent};font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-top:4px;">${join([d.jobTitle, d.company], " — ")}</div>` : ""}
-      <div style="color:#5b6478;font-size:13px;margin-top:8px;">${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}</div>
-      ${socialIconsRow(d, { color: accent, size: 22 }) ? `<div style="margin-top:10px;">${socialIconsRow(d, { color: accent, size: 22 })}</div>` : ""}
+      <div style="font-size:30px;font-weight:800;color:#1a1f2e;line-height:1.05;letter-spacing:-1px;">${d.fullName}</div>
+      <div style="border-top:3px solid ${accent};width:44px;height:3px;line-height:3px;font-size:0;margin:10px 0 0;">&nbsp;</div>
+      ${d.jobTitle || d.company ? `<div style="color:${accent};font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-top:10px;">${join([d.jobTitle, d.company], "  /  ")}</div>` : ""}
+      <div style="color:#5b6478;font-size:13px;margin-top:8px;line-height:1.6;font-weight:500;">${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}</div>
+      ${socialIconsRow(d, { color: accent, size: 22 }) ? `<div style="margin-top:12px;">${socialIconsRow(d, { color: accent, size: 22 })}</div>` : ""}
     </div>`;
   },
   renderPlainText: renderDefaultPlainText,
@@ -49,10 +51,11 @@ const colorStripe: SignatureTemplate = {
     const accent = d.accentColor || "#4f46e5";
     const logo = getResolvedLogo(d);
     return `<div style="font-family:${fontStack};max-width:480px;">
-      <div style="background:${accent};color:#fff;padding:12px 16px;border-radius:6px 6px 0 0;display:flex;align-items:center;justify-content:space-between;">
-        <span style="font-size:15px;font-weight:700;">${d.fullName}</span>
-        ${logo ? logoImg(logo, d.company || d.fullName, { height: 22 }) : ""}
-      </div>
+      ${headerBar(
+        `<span style="font-size:15px;font-weight:700;color:#fff;">${d.fullName}</span>`,
+        logo ? logoImg(logo, d.company || d.fullName, { height: 22, surface: "transparent" }) : "",
+        { background: accent, padding: "12px 16px", radius: "6px 6px 0 0" },
+      )}
       <div style="padding:10px 16px;border:1px solid #e6e8ee;border-top:0;border-radius:0 0 6px 6px;font-size:12px;color:#5b6478;line-height:1.6;">
         ${d.jobTitle || d.company ? `<div style="color:#1a1f2e;font-weight:600;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
         ${join([emailLink(d.email), telLink(d.phone), link(d.website, d.website)])}

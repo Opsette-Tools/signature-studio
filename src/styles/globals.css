@@ -579,7 +579,7 @@ a:hover {
 }
 
 .fav-btn--on {
-  color: #f59e0b;
+  color: var(--color-warning);
 }
 
 /* Share modal */
