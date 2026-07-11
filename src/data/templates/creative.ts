@@ -31,7 +31,7 @@ const giantMonogram: SignatureTemplate = {
   renderHtml: (d) => {
     const accent = d.accentColor || "#4f46e5";
     const mono = `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:separate;width:104px;height:104px;background:${accent};border-radius:16px;"><tr><td style="width:104px;height:104px;text-align:center;vertical-align:middle;font-family:${serifStack};font-size:46px;font-weight:700;color:#fff;letter-spacing:1px;">${initials(d.fullName)}</td></tr></table>`;
-    const social = socialIconsRow(d, { variant: "brand", size: 16, gap: 5 });
+    const social = socialIconsRow(d, { variant: "brand", size: 19, gap: 6 });
     const right = `<div style="font-family:${fontStack};">
         <div style="font-size:19px;font-weight:800;letter-spacing:-.3px;">${nameTwoTone(d.fullName, accent, T.ink, d.twoToneName)}</div>
         ${d.jobTitle || d.company ? `<div style="font-size:12px;color:${T.sub};font-weight:600;margin:3px 0 11px;">${join([d.jobTitle, d.company], " · ")}</div>` : '<div style="height:11px;"></div>'}

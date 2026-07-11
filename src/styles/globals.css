@@ -610,6 +610,18 @@ a:hover {
 .sig-inbox__signature {
   overflow-x: auto;
 }
+/* Dark-inbox preview: simulate a smart-invert client (Apple Mail / Gmail iOS) —
+   dark text is lifted to light, but images (photo, logo, hosted icons) are
+   inverted back so they render normally. This honestly previews whether the
+   signature's text is dark enough to survive a dark inbox. Colored bars that
+   are set via background on a <td> shift hue slightly, which mirrors real
+   client behavior. */
+.sig-inbox--dark .sig-inbox__signature {
+  filter: invert(1) hue-rotate(180deg);
+}
+.sig-inbox--dark .sig-inbox__signature img {
+  filter: invert(1) hue-rotate(180deg);
+}
 
 .sig-inbox__empty {
   color: #8a93a6;

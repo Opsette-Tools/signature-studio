@@ -38,7 +38,7 @@ const newsletter: SignatureTemplate = {
           <a href="${normalizeUrl(d.ctaUrl)}" style="color:${accent};font-weight:700;font-size:13px;text-decoration:none;display:inline-block;margin-top:4px;">${d.ctaLabel || "Subscribe to my newsletter"} &rarr;</a>
          </div>`
       : "";
-    const social = socialIconsRow(d, { variant: "brand", size: 16, gap: 5 });
+    const social = socialIconsRow(d, { variant: "brand", size: 19, gap: 6 });
     return `<div style="font-family:${fontStack};">${stackGroups([identity, card, contactGrid(d, { iconColor: accent, fontSize: 12, includeAddress: false }), social], 14)}</div>`;
   },
   renderPlainText: renderDefaultPlainText,

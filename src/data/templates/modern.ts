@@ -45,26 +45,28 @@ const symmetricWings: SignatureTemplate = {
       { ...d, email: "", phone: "" },
       { color: T.sub, iconColor: accent, fontSize: 12, align: "left", rowGap: 8 },
     );
-    const social = socialIconsRow(d, { variant: "brand", size: 17, gap: 5 });
+    const social = socialIconsRow(d, { variant: "brand", size: 20, gap: 7 });
     // The anchor from resolveAnchor is display:block, which left-aligns even
     // inside a text-align:center parent (text-align doesn't center block kids).
     // A one-cell auto-margin table centers it email-safely regardless of whether
-    // it's a fixed 72px photo/monogram or a variable-width logo.
-    const anchorCentered = `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;margin:0 auto;"><tr><td style="line-height:0;">${resolveAnchor(d, accent, { size: 72, variant: "circle", ring: accent })}</td></tr></table>`;
+    // it's a fixed photo/monogram or a variable-width logo.
+    const anchorCentered = `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;margin:0 auto;"><tr><td style="line-height:0;">${resolveAnchor(d, accent, { size: 84, variant: "circle", ring: accent })}</td></tr></table>`;
     const core = `<div style="text-align:center;font-family:${fontStack};">
         ${anchorCentered}
-        <div style="font-size:18px;font-weight:800;letter-spacing:-.2px;margin-top:10px;">${nameTwoTone(d.fullName, accent, T.ink, d.twoToneName)}</div>
+        <div style="font-size:19px;font-weight:800;letter-spacing:-.2px;margin-top:11px;">${nameTwoTone(d.fullName, accent, T.ink, d.twoToneName)}</div>
         ${d.jobTitle ? `<div style="font-size:11px;color:${T.sub};font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-top:3px;">${d.jobTitle}</div>` : ""}
-        ${social ? `<div style="margin-top:9px;">${social}</div>` : ""}
+        ${social ? `<div style="margin-top:11px;">${social}</div>` : ""}
       </div>`;
+    // Trimmed wing padding (20→14) so the bigger center + icons don't crowd or
+    // wrap on a phone.
     const leftCell = leftWing
-      ? `<td style="vertical-align:middle;padding-right:20px;border-right:1px solid ${T.rule};">${leftWing}</td>`
+      ? `<td style="vertical-align:middle;padding-right:14px;border-right:1px solid ${T.rule};">${leftWing}</td>`
       : "";
     const rightCell = rightWing
-      ? `<td style="vertical-align:middle;padding-left:20px;border-left:1px solid ${T.rule};">${rightWing}</td>`
+      ? `<td style="vertical-align:middle;padding-left:14px;border-left:1px solid ${T.rule};">${rightWing}</td>`
       : "";
     return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;">
-      <tr>${leftCell}<td style="vertical-align:middle;padding:0 22px;">${core}</td>${rightCell}</tr>
+      <tr>${leftCell}<td style="vertical-align:middle;padding:0 16px;">${core}</td>${rightCell}</tr>
     </table>`;
   },
   renderPlainText: renderDefaultPlainText,
@@ -98,7 +100,7 @@ const twoColumnModern: SignatureTemplate = {
           12,
         )}
       </div>`;
-    const social = socialIconsRow(d, { variant: "brand", size: 17, gap: 5 });
+    const social = socialIconsRow(d, { variant: "brand", size: 20, gap: 6 });
     const right = `<div style="font-family:${fontStack};">${contactGrid(d, { iconColor: accent, fontSize: 12 })}${social ? `<div style="margin-top:12px;">${social}</div>` : ""}</div>`;
     return twoColLeftRight(left, right, {
       leftWidth: 148,
@@ -125,7 +127,7 @@ const spine: SignatureTemplate = {
   layoutType: "two-column",
   renderHtml: (d) => {
     const accent = d.accentColor || accentDefault;
-    const social = socialIconsRow(d, { variant: "brand", size: 16, gap: 5 });
+    const social = socialIconsRow(d, { variant: "brand", size: 19, gap: 6 });
     const parts = (d.fullName || "").trim().split(/\s+/).filter(Boolean);
     const first = parts[0] || d.fullName;
     const rest = parts.slice(1).join(" ");
@@ -168,7 +170,7 @@ const fullBleedPhoto: SignatureTemplate = {
     const accent = d.accentColor || accentDefault;
     const logo = getResolvedLogo(d);
     const photo = d.profileImageDataUrl;
-    const social = socialIconsRow(d, { variant: "brand", size: 16, gap: 5 });
+    const social = socialIconsRow(d, { variant: "brand", size: 19, gap: 6 });
     const right = `<div style="font-family:${fontStack};">
         <div style="font-size:19px;font-weight:800;letter-spacing:-.3px;">${nameTwoTone(d.fullName, accent, T.ink, d.twoToneName)}</div>
         ${d.jobTitle ? `<div style="font-size:11.5px;color:${accent};font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;">${d.jobTitle}</div>` : ""}

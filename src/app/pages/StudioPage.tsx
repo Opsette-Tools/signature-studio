@@ -126,12 +126,13 @@ export function StudioPage() {
       <Drawer
         title={selectedTemplate ? `Preview · ${selectedTemplate.name}` : "Preview"}
         placement="bottom"
-        height="85%"
+        height="92%"
         open={previewOpen}
         onClose={() => setPreviewOpen(false)}
-        extra={canvasToggle}
+        styles={{ body: { overflowY: "auto", WebkitOverflowScrolling: "touch" } }}
         destroyOnHidden
       >
+        <div style={{ marginBottom: 16 }}>{canvasToggle}</div>
         <SignaturePreview template={selectedTemplate} data={data} canvas={canvas} />
       </Drawer>
 

@@ -37,7 +37,7 @@ const bigName: SignatureTemplate = {
       ? `<div style="color:${accent};font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.6px;">${join([d.jobTitle, d.company], "  /  ")}</div>`
       : "";
     const contact = contactGrid(d, { iconColor: accent, fontSize: 13 });
-    const social = socialIconsRow(d, { variant: "brand", size: 18, gap: 6 });
+    const social = socialIconsRow(d, { variant: "brand", size: 20, gap: 6 });
     return `<div style="font-family:${fontStack};">${stackGroups([identity, role, contact, social], 16)}</div>`;
   },
   renderPlainText: renderDefaultPlainText,
@@ -58,7 +58,7 @@ const masthead: SignatureTemplate = {
   layoutType: "stacked",
   renderHtml: (d) => {
     const accent = d.accentColor || "#4f46e5";
-    const social = socialIconsRow(d, { variant: "brand", size: 16, gap: 5 });
+    const social = socialIconsRow(d, { variant: "brand", size: 19, gap: 6 });
     const credits = join([d.jobTitle && d.jobTitle.toUpperCase(), d.company], "  ·  ");
     const meta = `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;width:100%;"><tr>
         <td style="font-family:${fontStack};font-size:11.5px;color:${T.sub};font-weight:600;letter-spacing:.02em;vertical-align:middle;">${credits}</td>
@@ -95,7 +95,7 @@ const offCenter: SignatureTemplate = {
   layoutType: "two-column",
   renderHtml: (d) => {
     const accent = d.accentColor || "#4f46e5";
-    const social = socialIconsRow(d, { variant: "brand", size: 17, gap: 5 });
+    const social = socialIconsRow(d, { variant: "brand", size: 20, gap: 6 });
     const inlineContact = join(
       [
         d.email && `<a href="mailto:${d.email}" style="color:${T.sub};text-decoration:none;">${d.email}</a>`,
@@ -136,7 +136,7 @@ const stackedBands: SignatureTemplate = {
   layoutType: "banner",
   renderHtml: (d) => {
     const accent = d.accentColor || "#4f46e5";
-    const social = socialIconsRow(d, { variant: "brand", size: 17, gap: 5 });
+    const social = socialIconsRow(d, { variant: "brand", size: 20, gap: 6 });
     // Top-band badge: logo → photo → white-outline monogram, all on the accent.
     const badge = headshotOrLogoBadge(d, accent, 56);
     const b1 = `<td style="padding:16px 20px;background:${accent};border-radius:11px 11px 0 0;vertical-align:middle;">
