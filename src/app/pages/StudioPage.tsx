@@ -118,6 +118,7 @@ export function StudioPage() {
         width={Math.min(960, typeof window !== "undefined" ? window.innerWidth : 960)}
         open={browseOpen}
         onClose={() => setBrowseOpen(false)}
+        styles={{ body: { padding: isDesktop ? 24 : 12 } }}
         destroyOnHidden
       >
         {browseGallery}
@@ -129,10 +130,18 @@ export function StudioPage() {
         height="92%"
         open={previewOpen}
         onClose={() => setPreviewOpen(false)}
-        styles={{ body: { overflowY: "auto", WebkitOverflowScrolling: "touch" } }}
+        // Trim the drawer's own body padding on mobile so the preview reclaims
+        // the side space — the inbox frame supplies its own (smaller) padding.
+        styles={{
+          body: {
+            overflowY: "auto",
+            WebkitOverflowScrolling: "touch",
+            padding: 12,
+          },
+        }}
         destroyOnHidden
       >
-        <div style={{ marginBottom: 16 }}>{canvasToggle}</div>
+        <div style={{ marginBottom: 12 }}>{canvasToggle}</div>
         <SignaturePreview template={selectedTemplate} data={data} canvas={canvas} />
       </Drawer>
 

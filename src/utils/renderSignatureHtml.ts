@@ -613,7 +613,11 @@ export const LIGHT_SURFACE: Surface = {
   // and let the client do the conversion. (This is how WiseStamp/HubSpot "work"
   // in dark mode — they don't fight it, they feed it dark-on-nothing text.)
   ink: "#141821",
-  sub: "#33404f",
+  // Contact text — pushed darker (was #33404f) toward a strong near-black so it
+  // reads as confident ink, not gray, AND inverts reliably in a dark inbox
+  // (email clients only lift genuinely-dark text; medium grays get left alone
+  // and vanish). See docs/MOBILE_AND_POLISH_REFACTOR.md decision #1.
+  sub: "#1f2733",
   faint: "#5c6675",
   rule: "#e3e6ea",
   surface: "#ffffff",

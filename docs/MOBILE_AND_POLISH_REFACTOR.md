@@ -79,3 +79,27 @@ These are deliberately LEFT for this session — don't assume, confirm with Ruth
 ## 5. Suggested kickoff prompt for the breakout session
 
 > I'm doing the Signature Studio mobile + sizing refactor. Read `docs/MOBILE_AND_POLISH_REFACTOR.md` — you're the build agent. Start with Tier 1 (global Ant `fontSize`/`controlHeight` bump in App.tsx) so I can eyeball it on my phone, then Tier 2 (type scale in tokens.css), then we'll tackle the mobile drawers (Tier 3) together. Also apply open decision #1 — push the contact-text color darker toward a strong near-black. Don't touch the signature render logic except that one `LIGHT_SURFACE.sub` value. Typecheck with `tsc -b` as you go; don't commit until I verify on my phone.
+
+---
+
+## 6. Progress — 2026-07-11 build session
+
+**Tier 1 (done)** — `App.tsx` ConfigProvider: `fontSize: 15`, `fontSizeLG/SM 17/13`, `controlHeight: 40` (+ LG/SM). One dial lifts all Ant inputs/buttons/selects/tabs app-wide.
+
+**Tier 2 (done)** — added `--font-size-xs…2xl` (12/13/15/17/20/24) to `tokens.css`; swapped every hardcoded app-chrome `font-size` in `globals.css` + the one inline one in `AboutPage.tsx` to tokens. Left the scaled thumbnail-preview px and the `.sig-inbox__*` mail-client mock px alone (not app text).
+
+**Decision #1 (done)** — `LIGHT_SURFACE.sub` `#33404f` → `#1f2733` (strong near-black). Only signature-render value touched.
+
+**The horizontal-scroll / left-clip bug — the real story (done).** Ruthnie's phone showed content shifted LEFT and clipped (name/label fields cut off), not just an extra scrollbar. Root cause: the **shared Opsette header was never designed for mobile** — its right-side actions cluster (`accent swatch + Try demo + Templates + Saved + labeled Share + theme toggle`) is a no-wrap flex row that, once the Tier-1 size bump widened the buttons, computed a min-width past 375px and pushed the whole page sideways. A first pass added `overflow-x:hidden` to the root — that was a BAND-AID and it CLIPPED her content instead of fixing it. Removed it. Real fixes:
+- **Header, actually mobile now** (`HeaderBar.tsx`): below `md` (768px) the secondary actions (Try demo / Browse templates / Saved / Share) collapse into a single kebab (`MoreOutlined`) Ant `Dropdown`. Brand-color swatch + theme toggle stay inline. Uses `Grid.useBreakpoint` (real JS breakpoint), not CSS hide — same action handlers, no duplication. Desktop cluster unchanged.
+- **Shared header CSS** (`opsette-header/header.css`): added `width/max-width:100%; overflow:hidden` to `.ops-header` and `min-width:0` to `.ops-header-actions` (+ tighter 4px gap ≤640px). Strictly-correct mobile hardening that helps every Opsette app, not just this one.
+- **Layout containment** (`globals.css`): `.app-shell/.app-main/.studio*` get `min-width:0; max-width:100%` so no child can widen the page. Wide *content* scrolls inside its own overflow box (previews/code already do).
+- **Template strip** (`globals.css`): `.template-strip` + `__body` + `__track` get `min-width:0` so the horizontal card row scrolls instead of clipping; head row now `flex-wrap`s (title keeps its line, category select + Browse-all drop to a full-width row ≤560px); overlay nav arrows hidden on touch/coarse-pointer (swipe instead).
+
+**Bottom nav** — confirmed the `.mobile-action-bar` (Templates / Preview / Copy, fixed bottom) already existed and is the right pattern; kept it, added safe-area inset padding. The top header stays (it's chrome + brand + the kebab) — that's intentional, a mobile app still has a top bar; it's just no longer overflowing.
+
+**Also done this session:** safe-area insets on `.app-main` + action bar (clears iPhone home indicator); tighter edge-to-edge padding (`--space-3`) under 768px.
+
+`tsc -b` clean throughout. NOT committed — Ruthnie verifies on her phone first. (Per her instruction this session: do not raise committing/build again.)
+
+**Still open / not done:** Tier 3 drawer polish beyond containment (browse drawer near-full-width + bigger single-column gallery cards; preview drawer width scaling) was not deep-tuned — the containment fixes take priority. Per-field color config (§3.2) and WiseStamp layout study (§3.3) remain future units.

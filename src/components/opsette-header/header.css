@@ -46,6 +46,12 @@
   gap: 16px;
   height: 60px;
   padding: 0 20px;
+  /* Never let the bar itself exceed the viewport — the middle title truncates
+     (min-width:0 below) and the right cluster stays put. Prevents a wide
+     actions row from pushing the whole page sideways on mobile. */
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
   background: hsl(var(--card, 0 0% 98%));
   color: hsl(var(--card-foreground, 0 0% 10%));
   border-bottom: 1px solid hsl(var(--border, 0 0% 92%));
@@ -112,6 +118,10 @@
   gap: 8px;
   margin-left: auto;
   flex: 0 0 auto;
+  min-width: 0;
+}
+@media (max-width: 640px) {
+  .ops-header-actions { gap: 4px; }
 }
 
 /* --- Dark scopes ----------------------------------------------------------

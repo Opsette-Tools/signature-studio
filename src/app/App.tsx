@@ -15,6 +15,16 @@ function ThemedApp() {
         token: {
           colorPrimary: "#4f46e5",
           borderRadius: 10,
+          // Global size dial (see docs/MOBILE_AND_POLISH_REFACTOR.md, Tier 1).
+          // Lifts every Ant input/button/select/tab/label app-wide; taller
+          // controls give bigger tap targets on mobile. App UI only — the
+          // signature render HTML stays hardcoded px on purpose.
+          fontSize: 15,
+          fontSizeLG: 17,
+          fontSizeSM: 13,
+          controlHeight: 40,
+          controlHeightLG: 46,
+          controlHeightSM: 32,
           fontFamily:
             "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif",
         },

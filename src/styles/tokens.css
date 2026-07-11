@@ -51,6 +51,16 @@
   /* Typography */
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Type scale — app UI only (NOT signature render HTML, which hardcodes px
+     because email clients strip CSS variables). One source of truth so app
+     text tunes from here. Base 15 matches Ant's fontSize token in App.tsx. */
+  --font-size-xs: 12px;
+  --font-size-sm: 13px;
+  --font-size-base: 15px;
+  --font-size-lg: 17px;
+  --font-size-xl: 20px;
+  --font-size-2xl: 24px;
 }
 
 [data-theme="dark"] {

@@ -36,7 +36,7 @@ export function AboutPage() {
           </ol>
         </Paragraph>
 
-        <Paragraph type="secondary" italic style={{ fontSize: 12, marginTop: 16 }}>
+        <Paragraph type="secondary" italic style={{ fontSize: "var(--font-size-xs)", marginTop: 16 }}>
           Everything runs in your browser. Your saved signatures, photos, and preferences are
           stored locally — nothing is sent to any server.
         </Paragraph>

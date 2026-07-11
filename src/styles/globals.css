@@ -10,11 +10,29 @@ body,
   margin: 0;
   padding: 0;
   min-height: 100%;
+  width: 100%;
+  max-width: 100%;
   background: var(--color-bg);
   color: var(--color-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Every layout container is constrained to its parent's width and never wider
+   than the viewport. Wide *content* (signature previews, code, the template
+   strip) scrolls inside its OWN overflow container — so the page never shifts
+   or clips, but nothing gets hidden either. This is the structural fix for the
+   left-clipped / doesn't-fit layout, replacing the earlier overflow:hidden
+   band-aid that just clipped content. */
+.app-shell,
+.app-main,
+.studio,
+.studio__grid,
+.studio__left,
+.studio__right {
+  min-width: 0;
+  max-width: 100%;
 }
 
 a {
@@ -53,7 +71,7 @@ a:hover {
   align-items: center;
   gap: var(--space-2);
   font-weight: 700;
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   color: var(--color-text);
 }
 
@@ -75,13 +93,23 @@ a:hover {
   gap: var(--space-2);
 }
 
+
 .app-main {
   flex: 1;
   width: 100%;
   max-width: var(--max-content-width);
   margin: 0 auto;
-  padding: var(--space-4);
-  padding-bottom: calc(var(--mobile-action-bar-height) + var(--space-6));
+  padding: var(--space-3);
+  /* Clear the fixed bottom action bar + the phone's home-indicator safe area. */
+  padding-bottom: calc(
+    var(--mobile-action-bar-height) + var(--space-6) + env(safe-area-inset-bottom, 0px)
+  );
+}
+
+@media (min-width: 768px) {
+  .app-main {
+    padding: var(--space-4);
+  }
 }
 
 @media (min-width: 992px) {
@@ -159,7 +187,7 @@ a:hover {
   justify-content: center;
   background: var(--color-surface-2);
   color: var(--color-text-secondary);
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: 600;
   line-height: 1;
 }
@@ -179,7 +207,7 @@ a:hover {
   gap: 14px;
 }
 .brand-name-example {
-  font-size: 18px;
+  font-size: var(--font-size-lg);
   font-weight: 800;
   letter-spacing: -0.3px;
 }
@@ -215,18 +243,27 @@ a:hover {
   border-radius: var(--radius-lg);
   padding: var(--space-3) var(--space-3) var(--space-4);
   box-shadow: var(--shadow-sm);
+  /* Contain the horizontal-scrolling track — it must never widen the strip. */
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .template-strip__head {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-2);
+  flex-wrap: wrap;
   padding: 0 var(--space-1) var(--space-3);
 }
 
+/* On a phone the title sits on its own line and the controls take the full
+   width beneath it, so nothing gets squeezed off-screen. */
+
 /* Shares the .group-label eyebrow treatment (see below); only the size differs. */
 .template-strip__title {
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   color: var(--color-text-muted);
   text-transform: uppercase;
@@ -237,18 +274,34 @@ a:hover {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  flex: 1 1 auto;
+  justify-content: flex-end;
+}
+
+/* On a phone the title keeps its line and the controls wrap to a full-width
+   row beneath it, so the category select + Browse button never get squeezed
+   off-screen. */
+@media (max-width: 560px) {
+  .template-strip__head-actions {
+    flex-basis: 100%;
+    justify-content: stretch;
+  }
+  .template-strip__head-actions .ant-select {
+    flex: 1 1 auto;
+  }
 }
 
 .template-strip__empty {
   padding: var(--space-4);
   color: var(--color-text-muted);
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   text-align: center;
   width: 100%;
 }
 
 .template-strip__body {
   position: relative;
+  min-width: 0;
 }
 
 .template-strip__nav {
@@ -268,14 +321,28 @@ a:hover {
   right: -8px;
 }
 
+/* Touch devices swipe the strip — the overlay arrows just cover cards. Hide
+   them where a fine pointer isn't the primary input. */
+@media (hover: none), (pointer: coarse) {
+  .template-strip__nav {
+    display: none;
+  }
+}
+
 .template-strip__track {
   display: flex;
   gap: var(--space-3);
   overflow-x: auto;
+  overflow-y: hidden;
   scroll-snap-type: x mandatory;
   scrollbar-width: thin;
+  -webkit-overflow-scrolling: touch;
   padding: var(--space-1) var(--space-2);
   margin: 0 calc(var(--space-2) * -1);
+  /* Anchor the flex row's intrinsic width to the container, not its content —
+     without this the row's min-content width can exceed the viewport and the
+     whole strip refuses to scroll (it just clips). */
+  min-width: 0;
 }
 
 .template-strip__track::-webkit-scrollbar {
@@ -347,13 +414,14 @@ a:hover {
   left: 0;
   right: 0;
   z-index: 30;
-  height: var(--mobile-action-bar-height);
+  height: calc(var(--mobile-action-bar-height) + env(safe-area-inset-bottom, 0px));
   background: var(--color-surface);
   border-top: 1px solid var(--color-border);
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-2);
   padding: var(--space-2);
+  padding-bottom: calc(var(--space-2) + env(safe-area-inset-bottom, 0px));
   box-shadow: 0 -4px 12px rgba(15, 23, 42, 0.06);
 }
 
@@ -365,14 +433,14 @@ a:hover {
   border: 0;
   background: var(--color-surface-2);
   color: var(--color-text);
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   font-weight: 600;
   border-radius: var(--radius-md);
   cursor: pointer;
 }
 
 .mobile-action-bar button .anticon {
-  font-size: 16px;
+  font-size: var(--font-size-lg);
 }
 
 .mobile-action-bar__primary {
@@ -400,7 +468,7 @@ a:hover {
 }
 
 .section-card__title {
-  font-size: 14px;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--color-text);
   margin: 0 0 var(--space-3) 0;
@@ -410,7 +478,7 @@ a:hover {
 }
 
 .section-card__hint {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   margin: 0 0 var(--space-3) 0;
 }
@@ -453,14 +521,14 @@ a:hover {
 }
 
 .template-card__name {
-  font-size: 13px;
+  font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--color-text);
   margin: 0;
 }
 
 .template-card__desc {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   margin: 0;
   line-height: 1.4;
@@ -471,17 +539,37 @@ a:hover {
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
   padding: var(--space-3);
-  height: 140px;
+  height: 150px;
   overflow: hidden;
   position: relative;
   color: #1a1f2e;
   font-size: 10px;
+  /* Center the scaled signature instead of pinning it to the corner — this is
+     what made the mobile cards look left-aligned and squished. */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .template-card__preview-scale {
-  transform: scale(0.55);
-  transform-origin: top left;
-  width: 182%;
+  /* Scale the fixed-width signature down to fit the card, centered. width is
+     1/scale so the scaled box still measures the card's content width. */
+  transform: scale(0.62);
+  transform-origin: center center;
+  width: 161%;
+  flex: 0 0 auto;
+}
+
+/* On a phone the browse drawer is full-width, so the cards have real room —
+   zoom the preview in and give it more height. */
+@media (max-width: 640px) {
+  .template-card__preview {
+    height: 180px;
+  }
+  .template-card__preview-scale {
+    transform: scale(0.82);
+    width: 122%;
+  }
 }
 
 .template-card__tags {
@@ -510,12 +598,21 @@ a:hover {
  * ------------------------------------------------------------------ */
 .sig-inbox {
   border-radius: var(--radius-lg, 14px);
-  padding: clamp(16px, 3vw, 34px);
+  /* Mobile-first: minimal frame padding so the signature gets the width. The
+     browser-chrome look Ruthnie likes is kept — just not padded to death.
+     Desktop gets the roomier frame back below. */
+  padding: 10px;
   overflow-x: auto;
   min-height: 200px;
   display: flex;
   justify-content: center;
   align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+  .sig-inbox {
+    padding: clamp(16px, 3vw, 34px);
+  }
 }
 .sig-inbox--light {
   background: #eceef2;
@@ -594,7 +691,12 @@ a:hover {
 }
 
 .sig-inbox__body {
-  padding: 22px 24px 26px;
+  padding: 16px 14px 20px;
+}
+@media (min-width: 768px) {
+  .sig-inbox__body {
+    padding: 22px 24px 26px;
+  }
 }
 .sig-inbox__tail {
   margin: 0 0 18px;
@@ -641,7 +743,7 @@ a:hover {
   border-radius: var(--radius-md);
   padding: var(--space-3);
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--color-text);
   white-space: pre-wrap;
   word-break: break-all;
@@ -663,7 +765,7 @@ a:hover {
   justify-content: center;
   align-items: center;
   gap: var(--space-4);
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
 }
 
@@ -718,14 +820,14 @@ a:hover {
 .saved-row__name {
   font-weight: 600;
   color: var(--color-text);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .saved-row__sub {
-  font-size: 12px;
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
 }
 
@@ -759,7 +861,7 @@ a:hover {
    One source of truth — supersedes the ad-hoc .template-strip__title /
    .share-modal__list-title duplicates. */
 .group-label {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--color-text-muted);
   text-transform: uppercase;
@@ -777,7 +879,7 @@ a:hover {
   border: 0;
   color: var(--color-text-subtle);
   cursor: pointer;
-  font-size: 16px;
+  font-size: var(--font-size-lg);
   padding: 4px;
   line-height: 1;
 }
@@ -788,7 +890,7 @@ a:hover {
 
 /* Share modal */
 .share-modal__list-title {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--color-text-muted);
   text-transform: uppercase;
@@ -797,7 +899,7 @@ a:hover {
 }
 
 .share-modal__list-empty {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--color-text-subtle);
 }
 
@@ -824,7 +926,7 @@ a:hover {
 }
 
 .share-modal__qr-caption {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--color-text-muted);
   margin: 0;
 }
@@ -855,7 +957,7 @@ a:hover {
 .share-page__field {
   display: flex;
   gap: var(--space-2);
-  font-size: 13px;
+  font-size: var(--font-size-sm);
   border-bottom: 1px dashed var(--color-border);
   padding-bottom: 4px;
 }
@@ -873,7 +975,7 @@ a:hover {
 }
 
 .share-page__hint {
-  font-size: 12px;
+  font-size: var(--font-size-xs);
   color: var(--color-text-muted);
   margin: var(--space-2) 0 0;
 }
