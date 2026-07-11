@@ -1,21 +1,31 @@
-import { DeleteOutlined, EditOutlined, SaveOutlined, UploadOutlined } from "@ant-design/icons";
-import { Button, Input, Modal, Popconfirm, Radio, message } from "antd";
+import {
+  DeleteOutlined,
+  EditOutlined,
+  ImportOutlined,
+  SaveOutlined,
+  UploadOutlined,
+} from "@ant-design/icons";
+import { Button, Input, Modal, Popconfirm, Radio, Space, message } from "antd";
 import { useState } from "react";
 import type { SavedSignature, SignatureData } from "@/types/signature";
 import { getTemplateById } from "@/data/templates";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { SectionCard } from "@/components/ui/SectionCard";
 import { useLocalSignatures } from "@/hooks/useLocalSignatures";
+import { ReopenExportModal } from "./ReopenExportModal";
 
 type Props = {
   currentTemplateId: string;
   currentData: SignatureData;
   onLoad: (entry: SavedSignature) => void;
+  /** Restore a signature pasted back from an "Export to Brand Board" blob. */
+  onReopen: (templateId: string, data: SignatureData) => void;
 };
 
-export function SavedSignatures({ currentTemplateId, currentData, onLoad }: Props) {
+export function SavedSignatures({ currentTemplateId, currentData, onLoad, onReopen }: Props) {
   const { items, save, rename, remove, isFull, max } = useLocalSignatures();
   const [saveOpen, setSaveOpen] = useState(false);
+  const [reopenOpen, setReopenOpen] = useState(false);
   const [name, setName] = useState("");
   const [replaceId, setReplaceId] = useState<string>("");
   const [renameTarget, setRenameTarget] = useState<SavedSignature | null>(null);
@@ -43,9 +53,14 @@ export function SavedSignatures({ currentTemplateId, currentData, onLoad }: Prop
       title={`Saved signatures (${items.length}/${max})`}
       hint="Stored locally on this device only."
       extra={
-        <Button type="primary" size="small" icon={<SaveOutlined />} onClick={openSave}>
-          Save current
-        </Button>
+        <Space size="small">
+          <Button size="small" icon={<ImportOutlined />} onClick={() => setReopenOpen(true)}>
+            Reopen
+          </Button>
+          <Button type="primary" size="small" icon={<SaveOutlined />} onClick={openSave}>
+            Save current
+          </Button>
+        </Space>
       }
     >
       {items.length === 0 ? (
@@ -144,6 +159,12 @@ export function SavedSignatures({ currentTemplateId, currentData, onLoad }: Prop
       >
         <Input value={renameValue} onChange={(e) => setRenameValue(e.target.value)} />
       </Modal>
+
+      <ReopenExportModal
+        open={reopenOpen}
+        onClose={() => setReopenOpen(false)}
+        onReopen={onReopen}
+      />
     </SectionCard>
   );
 }

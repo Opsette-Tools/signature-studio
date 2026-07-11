@@ -164,6 +164,7 @@ a:hover {
   padding: 0 var(--space-1) var(--space-3);
 }
 
+/* Shares the .group-label eyebrow treatment (see below); only the size differs. */
 .template-strip__title {
   font-size: 13px;
   font-weight: 600;
@@ -566,6 +567,23 @@ a:hover {
   gap: var(--space-2);
   align-items: center;
   flex-wrap: wrap;
+}
+
+/* Reusable eyebrow label for grouping controls (Copy / Share, etc.).
+   One source of truth — supersedes the ad-hoc .template-strip__title /
+   .share-modal__list-title duplicates. */
+.group-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-2);
+}
+
+/* A labeled cluster of action buttons under a .group-label. */
+.action-group + .action-group {
+  margin-top: var(--space-4);
 }
 
 .fav-btn {

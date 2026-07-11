@@ -82,6 +82,10 @@ export function StudioPage() {
               replaceAll(entry.data);
               setSelectedTemplateId(entry.templateId);
             }}
+            onReopen={(templateId, reopened) => {
+              replaceAll(reopened);
+              setSelectedTemplateId(templateId);
+            }}
           />
         </div>
         {isDesktop ? (

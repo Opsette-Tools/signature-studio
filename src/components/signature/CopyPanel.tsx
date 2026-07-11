@@ -1,10 +1,17 @@
-import { CodeOutlined, CopyOutlined, FileTextOutlined, ShareAltOutlined } from "@ant-design/icons";
-import { Button, Tabs, Tag } from "antd";
+import {
+  CodeOutlined,
+  CopyOutlined,
+  FileTextOutlined,
+  LayoutOutlined,
+  ShareAltOutlined,
+} from "@ant-design/icons";
+import { Button, Tabs, Tag, Tooltip, message } from "antd";
 import { useMemo, useState } from "react";
 import type { SignatureData } from "@/types/signature";
 import type { SignatureTemplate } from "@/types/template";
 import { useCopySignature } from "@/hooks/useCopySignature";
 import { SectionCard } from "@/components/ui/SectionCard";
+import { toKitJson } from "@/utils/brandKit";
 import { ShareModal } from "./ShareModal";
 
 type Props = {
@@ -39,12 +46,23 @@ export function CopyPanel({ template, data }: Props) {
 
   const disabled = !template;
 
+  const handleExportToBrandBoard = async () => {
+    if (!template) return;
+    try {
+      const payload = toKitJson(template, data);
+      await navigator.clipboard.writeText(JSON.stringify(payload));
+      message.success("Signature copied — paste it into Brand Board");
+    } catch {
+      message.error("Could not copy to clipboard");
+    }
+  };
+
   return (
     <SectionCard
       title="Copy & export"
       hint="Paste into Gmail, Outlook, Apple Mail, etc."
     >
-      <div className="row" style={{ marginBottom: 12, alignItems: "center" }}>
+      <div className="row" style={{ marginBottom: 16, alignItems: "center" }}>
         <Tag color={sizeColor}>
           {sizeKb} KB / 8 KB · {sizeLabel}
         </Tag>
@@ -54,41 +72,60 @@ export function CopyPanel({ template, data }: Props) {
           </small>
         ) : null}
       </div>
-      <div className="row" style={{ marginBottom: 12 }}>
-        <Button
-          type="primary"
-          icon={<CopyOutlined />}
-          disabled={disabled}
-          onClick={() => copyRich(html, plain)}
-        >
-          Copy rich signature
-        </Button>
-        <Button
-          icon={<CodeOutlined />}
-          disabled={disabled}
-          onClick={() => copyHtml(html)}
-        >
-          Copy HTML
-        </Button>
-        <Button
-          icon={<FileTextOutlined />}
-          disabled={disabled}
-          onClick={() => copyPlain(plain)}
-        >
-          Copy plain text
-        </Button>
-        <Button
-          icon={<ShareAltOutlined />}
-          disabled={disabled}
-          onClick={() => setShareOpen(true)}
-        >
-          Share link
-        </Button>
+
+      <div className="action-group">
+        <div className="group-label">Copy</div>
+        <div className="row">
+          <Button
+            icon={<CopyOutlined />}
+            disabled={disabled}
+            onClick={() => copyRich(html, plain)}
+          >
+            Rich signature
+          </Button>
+          <Button
+            icon={<CodeOutlined />}
+            disabled={disabled}
+            onClick={() => copyHtml(html)}
+          >
+            HTML
+          </Button>
+          <Button
+            icon={<FileTextOutlined />}
+            disabled={disabled}
+            onClick={() => copyPlain(plain)}
+          >
+            Plain text
+          </Button>
+        </div>
+      </div>
+
+      <div className="action-group">
+        <div className="group-label">Share</div>
+        <div className="row">
+          <Button
+            icon={<ShareAltOutlined />}
+            disabled={disabled}
+            onClick={() => setShareOpen(true)}
+          >
+            Share link
+          </Button>
+          <Tooltip title="Copy as JSON to paste into Brand Board, or to reopen later">
+            <Button
+              icon={<LayoutOutlined />}
+              disabled={disabled}
+              onClick={handleExportToBrandBoard}
+            >
+              Export to Brand Board
+            </Button>
+          </Tooltip>
+        </div>
       </div>
       <Tabs
         size="small"
         activeKey={tab}
         onChange={setTab}
+        style={{ marginTop: 20 }}
         items={[
           {
             key: "rich",
