@@ -33,8 +33,13 @@ export type SignatureData = {
   // Footer
   disclaimer: string;
 
-  // Branding color (used by some templates)
+  // Branding color — drives every template's accent (surname, icons, bars, CTAs).
   accentColor: string;
+
+  // When true (default), the surname renders in the accent color for a two-tone
+  // name; when false, the whole name is single-color ink. A per-signature style
+  // choice — some corporate looks want the restrained single color.
+  twoToneName: boolean;
 };
 
 export const emptySignatureData: SignatureData = {
@@ -60,7 +65,8 @@ export const emptySignatureData: SignatureData = {
   ctaLabel: "",
   ctaUrl: "",
   disclaimer: "",
-  accentColor: "#4f46e5",
+  accentColor: "#c2410c",
+  twoToneName: true,
 };
 
 /**
@@ -93,7 +99,8 @@ export const sampleSignatureData: SignatureData = {
   ctaLabel: "Book a call",
   ctaUrl: "cal.com/jane",
   disclaimer: "This email and any attachments are confidential.",
-  accentColor: "#4f46e5",
+  accentColor: "#c2410c",
+  twoToneName: true,
 };
 
 export type SavedSignature = {

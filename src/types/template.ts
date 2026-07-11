@@ -6,7 +6,6 @@ export type TemplateCategory =
   | "corporate"
   | "bold"
   | "creative"
-  | "compact"
   | "promotional";
 
 export type LayoutType =
@@ -37,6 +36,5 @@ export const CATEGORY_LABELS: Record<TemplateCategory, string> = {
   corporate: "Corporate",
   bold: "Bold",
   creative: "Creative",
-  compact: "Compact",
   promotional: "Promotional",
 };

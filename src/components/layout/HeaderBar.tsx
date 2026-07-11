@@ -22,8 +22,8 @@ export function HeaderBar() {
 
   const rightExtra = (
     <>
-      <Tooltip title="Accent color (used by some templates)">
-        <label className="accent-swatch" aria-label="Accent color">
+      <Tooltip title="Brand color — drives every template (also on the Brand tab)">
+        <label className="accent-swatch" aria-label="Brand color">
           <input
             type="color"
             value={data.accentColor}

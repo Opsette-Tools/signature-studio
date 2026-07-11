@@ -1,3 +1,8 @@
+> # ⛔ DEAD — DO NOT FOLLOW THIS DOC
+> **Superseded on 2026-07-11 by [`SIGNATURE_REBUILD_V2.md`](./SIGNATURE_REBUILD_V2.md).** This plan produced "parlor tricks" (bigger fonts, more whitespace) and its per-template verdicts are obsolete. The real rebuild — twelve new unexpected structures + Ruthnie's full triage of the current 21 — lives in `SIGNATURE_REBUILD_V2.md`. Kept only for provenance. **Build from V2, not this.**
+
+---
+
 # Signature Studio — Template Redesign Plan
 
 **Status:** Ready to build. This doc is self-sufficient — a working agent should pick it up and execute without further input from Ruthnie. Where a judgment call arises, the rule is: **pick the structurally stronger, more distinct option.** Do not ask which shade/spacing/font — exercise taste.

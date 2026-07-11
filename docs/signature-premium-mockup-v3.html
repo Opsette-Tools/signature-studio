@@ -1,0 +1,419 @@
+<title>Signature Studio — Unexpected Structures v3</title>
+<style>
+  :root {
+    --page:#f4f5f7; --card:#ffffff; --ink:#171a1f; --ink-soft:#5b6270; --ink-faint:#8a919e;
+    --border:#e5e7eb; --border-soft:#eef0f2; --brand:#c2410c; --brand-tint:#fdf0e9;
+    --radius:14px; --shadow:0 1px 2px rgba(16,20,28,.05), 0 4px 16px rgba(16,20,28,.05);
+  }
+  @media (prefers-color-scheme: dark) { :root {
+    --page:#0e1013; --card:#191c21; --ink:#e9ebef; --ink-soft:#a2a9b5; --ink-faint:#6f7681;
+    --border:#2a2e35; --border-soft:#23272d; --brand:#fb923c; --brand-tint:#241a12; --shadow:0 1px 2px rgba(0,0,0,.4); } }
+  :root[data-theme="dark"]{ --page:#0e1013; --card:#191c21; --ink:#e9ebef; --ink-soft:#a2a9b5; --ink-faint:#6f7681;
+    --border:#2a2e35; --border-soft:#23272d; --brand:#fb923c; --brand-tint:#241a12; --shadow:0 1px 2px rgba(0,0,0,.4); }
+  :root[data-theme="light"]{ --page:#f4f5f7; --card:#fff; --ink:#171a1f; --ink-soft:#5b6270; --ink-faint:#8a919e;
+    --border:#e5e7eb; --border-soft:#eef0f2; --brand:#c2410c; --brand-tint:#fdf0e9; --shadow:0 1px 2px rgba(16,20,28,.05), 0 4px 16px rgba(16,20,28,.05); }
+
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--page); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    font-size:15px; line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1180px; margin:0 auto; padding:40px 24px 100px; }
+  .eyebrow { font-size:12px; text-transform:uppercase; letter-spacing:.11em; font-weight:700; color:var(--brand); margin-bottom:10px; }
+  h1 { font-size:31px; font-weight:800; letter-spacing:-.02em; margin:0 0 12px; line-height:1.08; }
+  .lede { margin:0; color:var(--ink-soft); font-size:15.5px; max-width:740px; }
+  .lede b { color:var(--ink); font-weight:650; }
+
+  .controls { display:flex; align-items:center; gap:18px; flex-wrap:wrap; margin:26px 0 20px; padding:14px 16px;
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);
+    position:sticky; top:12px; z-index:5; }
+  .cgroup { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+  .clabel { font-size:12.5px; color:var(--ink-faint); font-weight:600; }
+  .seg { display:inline-flex; background:var(--page); border:1px solid var(--border); border-radius:999px; padding:3px; }
+  .seg button { appearance:none; border:none; background:none; font-family:inherit; cursor:pointer;
+    font-size:13px; font-weight:600; color:var(--ink-soft); padding:6px 14px; border-radius:999px; }
+  .seg button[aria-pressed="true"] { background:var(--card); color:var(--ink); box-shadow:0 1px 2px rgba(0,0,0,.08); }
+  .swatches { display:inline-flex; gap:7px; }
+  .swatch { width:24px; height:24px; border-radius:7px; cursor:pointer; border:2px solid transparent; padding:0; }
+  .swatch[aria-pressed="true"] { border-color:var(--ink); }
+
+  .gallery { display:grid; grid-template-columns:repeat(auto-fill, minmax(500px, 1fr)); gap:22px; }
+  @media (max-width:600px){ .gallery { grid-template-columns:1fr; } }
+  .spec { background:var(--card); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);
+    overflow:hidden; display:flex; flex-direction:column; }
+  .spec-head { padding:15px 18px 13px; border-bottom:1px solid var(--border-soft); }
+  .spec-title-row { display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .spec-name { font-size:15.5px; font-weight:700; }
+  .spec-num { font-size:12px; font-weight:800; color:var(--brand); background:var(--brand-tint); border-radius:7px; padding:2px 8px; }
+  .spec-tag { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em; padding:3px 9px; border-radius:999px; white-space:nowrap; }
+  .tag-html { color:#0f766e; background:rgba(15,118,110,.1); }
+  .tag-img { color:#9333ea; background:rgba(147,51,234,.1); }
+  .spec-desc { margin-top:7px; font-size:13px; color:var(--ink-soft); line-height:1.5; }
+  .spec-desc b { color:var(--ink); font-weight:650; }
+  .spec-move { margin-top:8px; font-size:12px; color:var(--brand); font-weight:600; }
+
+  .canvas { padding:32px 26px; }
+  .canvas--light { background:#ffffff; background-image:radial-gradient(var(--border-soft) 0.5px, transparent 0.5px); background-size:14px 14px; }
+  :root[data-theme="dark"] .canvas--light { background:#fff; background-image:none; }
+  .canvas--dark { background:#14161a; }
+
+  .note { margin:32px 0 0; padding:18px 20px; background:var(--card); border:1px solid var(--border);
+    border-left:3px solid var(--brand); border-radius:var(--radius); box-shadow:var(--shadow); }
+  .note h3 { margin:0 0 8px; font-size:15px; }
+  .note p { margin:6px 0 0; color:var(--ink-soft); font-size:14px; }
+  .note b { color:var(--ink); }
+</style>
+
+<div class="wrap">
+  <div class="eyebrow">Signature Studio · v3 — breaking the formula</div>
+  <h1>Where does it go? — twelve unexpected structures</h1>
+  <p class="lede">No more name-top / title-under / contacts-stacked / icons-to-the-side. Every card here puts a key element somewhere you <b>wouldn't expect</b> — icons flanking both sides, the name as a full-width masthead, contact info as a horizontal ribbon, a monogram blown up into a graphic, a bold spine that <b>is</b> the design. Your real DeeBuilt data throughout. A <b style="color:#0f766e;">green tag</b> means it's live email-safe HTML; a <b style="color:#9333ea;">purple tag</b> means it only works as a rendered image (the app already exports PNG). Solid saturated color this time — no timid tints.</p>
+
+  <div class="controls">
+    <div class="cgroup"><span class="clabel">Inbox</span>
+      <div class="seg" id="canvasSeg"><button data-canvas="light" aria-pressed="true">Light</button><button data-canvas="dark" aria-pressed="false">Dark</button></div>
+    </div>
+    <div class="cgroup"><span class="clabel">Brand color</span>
+      <div class="swatches" id="swatches">
+        <button class="swatch" style="background:#c2410c" data-accent="#c2410c" aria-pressed="true" title="Rust"></button>
+        <button class="swatch" style="background:#4338ca" data-accent="#4338ca" aria-pressed="false" title="Indigo"></button>
+        <button class="swatch" style="background:#0f766e" data-accent="#0f766e" aria-pressed="false" title="Teal"></button>
+        <button class="swatch" style="background:#be123c" data-accent="#be123c" aria-pressed="false" title="Crimson"></button>
+        <button class="swatch" style="background:#0e1420" data-accent="#0e1420" aria-pressed="false" title="Ink"></button>
+      </div>
+    </div>
+    <div class="cgroup"><span class="clabel">Anchor</span>
+      <div class="seg" id="anchorSeg"><button data-anchor="photo" aria-pressed="true">Headshot</button><button data-anchor="logo" aria-pressed="false">Logo</button></div>
+    </div>
+    <div class="cgroup"><span class="clabel">Theme</span>
+      <div class="seg" id="themeSeg"><button data-theme="light" aria-pressed="true">Light</button><button data-theme="dark" aria-pressed="false">Dark</button></div>
+    </div>
+  </div>
+
+  <div class="gallery" id="gallery"></div>
+
+  <div class="note">
+    <h3>How to read this</h3>
+    <p>These are <b>structural bets</b>, not finished templates — the point is to find which unexpected arrangements make you go "oh." Tell me the 3–4 that land and I'll refine those hard (real polish, spacing, the works) and build them into the app. The <b style="color:#9333ea;">image-only</b> ones are the payoff for the app already having a PNG export — that's where we can genuinely out-design the email-safe crowd.</p>
+  </div>
+</div>
+
+<script>
+const FONT="-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+const SERIF="Georgia,'Times New Roman',serif";
+const P={ first:"Ruthnie", last:"Benoit", title:"Automations & Web Design", company:"DeeBuilt",
+  tagline:"Tech & ops help when you need it", email:"ruthnie@deebuilt.co", phone:"+1 (407) 946-0264",
+  web:"deebuilt.co", address:"Orlando, FL", book:"Book me", initials:"RB",
+  photo:"https://deebuilt.co/Prof%20Headshot.png", logo:"https://deebuilt.co/DeeBuilt%20logo_A14%20(1).png" };
+const NAME=P.first+" "+P.last;
+
+let ACCENT="#c2410c", CANVAS="light", ANCHOR="photo";
+function accentFor(){ if(CANVAS!=="dark") return ACCENT;
+  return ({"#c2410c":"#fb923c","#4338ca":"#a5b4fc","#0f766e":"#5eead4","#be123c":"#fda4af","#0e1420":"#94a3b8"})[ACCENT]||ACCENT; }
+function onColor(){ return "#ffffff"; }
+
+const ICON={
+  email:"M3 5.5h18c.55 0 1 .45 1 1v11c0 .55-.45 1-1 1H3c-.55 0-1-.45-1-1v-11c0-.55.45-1 1-1zm1.6 1.5L12 12.2 19.4 7H4.6zM20 9.1l-7.4 5.2c-.36.25-.84.25-1.2 0L4 9.1V17h16V9.1z",
+  phone:"M6.6 2.5c.5 0 .95.3 1.13.78l1.2 3.1c.16.42.06.9-.27 1.2L7.2 9.1c1.02 2 2.7 3.68 4.7 4.7l1.5-1.46c.3-.33.78-.43 1.2-.27l3.1 1.2c.48.18.78.63.78 1.13V19c0 1.1-.9 2-2 2-8.28 0-15-6.72-15-15 0-1.1.9-2 2-2h2.62z",
+  web:"M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm6.9 6h-2.95a15.6 15.6 0 0 0-1.38-3.56A8.03 8.03 0 0 1 18.9 8zM12 4.04c.83 1.2 1.48 2.53 1.91 3.96h-3.82A13.7 13.7 0 0 1 12 4.04zM4.26 14a8 8 0 0 1 0-4h3.38a16.5 16.5 0 0 0 0 4H4.26zm.84 2h2.95c.34 1.27.8 2.46 1.38 3.56A8.03 8.03 0 0 1 5.1 16zm2.95-8H5.1a8.03 8.03 0 0 1 4.33-3.56A15.6 15.6 0 0 0 8.05 8zM12 19.96A13.7 13.7 0 0 1 10.09 16h3.82A13.7 13.7 0 0 1 12 19.96zM14.34 14H9.66a14.7 14.7 0 0 1 0-4h4.68a14.7 14.7 0 0 1 0 4zm.27 5.56c.58-1.1 1.04-2.29 1.38-3.56h2.95a8.03 8.03 0 0 1-4.33 3.56zM16.36 14a16.5 16.5 0 0 0 0-4h3.38a8 8 0 0 1 0 4h-3.38z",
+  pin:"M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z",
+};
+const SOC={
+  linkedin:{c:"#0A66C2",p:"M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.8 0 0 .78 0 1.74v20.51C0 23.22.8 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.75V1.74C24 .78 23.2 0 22.22 0z"},
+  instagram:{c:"#E4405F",p:"M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.72 3.72 0 0 1-1.38-.9 3.72 3.72 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16zM12 0C8.74 0 8.33.01 7.05.07c-1.28.06-2.15.26-2.91.56-.79.31-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.63-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.28.26 2.15.56 2.91.31.79.72 1.46 1.38 2.13.67.66 1.34 1.07 2.13 1.38.76.3 1.63.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.28-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.63.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.28-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.63-.5-2.91-.56C15.67.01 15.26 0 12 0zm0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm7.85-10.41a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0z"},
+  facebook:{c:"#1877F2",p:"M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.68.24 2.68.24v2.97h-1.51c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"},
+};
+function svg(path,color,size){ const s=`<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}"><path d="${path}"/></svg>`;
+  return `<img src="data:image/svg+xml;utf8,${encodeURIComponent(s)}" width="${size}" height="${size}" alt="" style="display:block;width:${size}px;height:${size}px;"/>`; }
+
+function headshot(size,ring){ const r=ring?`border:3px solid ${ring};`:""; return `<img src="${P.photo}" alt="${NAME}" width="${size}" height="${size}" style="display:block;border-radius:${Math.round(size/2)}px;${r}"/>`; }
+function headshotSquare(size){ return `<img src="${P.photo}" alt="${NAME}" width="${size}" height="${size}" style="display:block;"/>`; }
+function logoBox(h,white){ const b=white?"background:#fff;border-radius:8px;padding:8px;":""; return `<span style="display:inline-block;${b}line-height:0;"><img src="${P.logo}" alt="${P.company}" height="${h}" style="display:block;height:${h}px;width:auto;"/></span>`; }
+function anchor(size,ring,accent){ if(ANCHOR==="logo") return logoBox(Math.round(size*0.7),false); return headshot(size,ring); }
+function socials(color,size,brand){ return ["linkedin","instagram","facebook"].map(k=>{ const s=SOC[k]; return `<a href="#" style="text-decoration:none;display:inline-block;margin:0 5px;line-height:0;vertical-align:middle;">${svg(s.p, brand?s.c:color, size)}</a>`; }).join(""); }
+
+/* ============ THE TWELVE STRUCTURES ============ */
+
+/* 1. SYMMETRIC WINGS — the one you liked. Contact split into two mirrored side columns, identity centered. */
+function wings(t,a){
+  const wingRow=(icon,val,side)=>{
+    const ic=svg(icon,a,13);
+    return side==="left"
+      ? `<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 0 8px auto;"><tr><td style="color:${t.sub};font-family:${FONT};font-size:12px;padding-right:8px;white-space:nowrap;">${val}</td><td style="line-height:0;">${ic}</td></tr></table>`
+      : `<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin:0 auto 8px 0;"><tr><td style="line-height:0;padding-right:8px;">${ic}</td><td style="color:${t.sub};font-family:${FONT};font-size:12px;white-space:nowrap;">${val}</td></tr></table>`;
+  };
+  const L=wingRow(ICON.phone,P.phone,"left")+wingRow(ICON.email,P.email,"left");
+  const R=wingRow(ICON.web,P.web,"right")+wingRow(ICON.pin,P.address,"right");
+  const core=`<div style="text-align:center;font-family:${FONT};">
+    ${anchor(72,a,a)}
+    <div style="font-size:18px;font-weight:800;color:${t.ink};letter-spacing:-.2px;margin-top:10px;">${P.first} <span style="color:${a};">${P.last}</span></div>
+    <div style="font-size:11px;color:${t.sub};font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-top:3px;">${P.title}</div>
+    <div style="margin-top:9px;">${socials(t.faint,17,true)}</div>
+  </div>`;
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;margin:0 auto;">
+    <tr>
+      <td style="vertical-align:middle;padding-right:20px;border-right:1px solid ${t.rule};">${L}</td>
+      <td style="vertical-align:middle;padding:0 22px;">${core}</td>
+      <td style="vertical-align:middle;padding-left:20px;border-left:1px solid ${t.rule};">${R}</td>
+    </tr>
+  </table>`;
+}
+
+/* 2. MASTHEAD — name huge, full width, everything small beneath. Editorial. */
+function masthead(t,a){
+  const meta=`<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;"><tr>
+    <td style="font-family:${FONT};font-size:11.5px;color:${t.sub};font-weight:600;letter-spacing:.02em;vertical-align:middle;">${P.title.toUpperCase()} &nbsp;·&nbsp; ${P.company}</td>
+    <td style="text-align:right;vertical-align:middle;">${socials(t.faint,16,true)}</td>
+  </tr></table>`;
+  const ribbon=`<span style="font-family:${FONT};font-size:12px;color:${t.sub};">${P.email} &nbsp;·&nbsp; ${P.phone} &nbsp;·&nbsp; <span style="color:${a};font-weight:700;">${P.web}</span></span>`;
+  return `<div style="max-width:520px;">
+    <div style="font-family:${SERIF};font-size:38px;font-weight:700;letter-spacing:-1px;color:${t.ink};line-height:1;">${P.first} <span style="color:${a};">${P.last}</span></div>
+    <div style="border-top:2px solid ${t.ink};border-bottom:1px solid ${t.rule};padding:9px 0;margin-top:12px;">${meta}</div>
+    <div style="margin-top:11px;">${ribbon}</div>
+  </div>`;
+}
+
+/* 3. THE SPINE — a bold color bar down the middle IS the design; content hangs off both sides. */
+function spine(t,a){
+  const left=`<div style="font-family:${FONT};text-align:right;">
+    <div style="font-size:19px;font-weight:800;color:${t.ink};letter-spacing:-.3px;">${P.first}</div>
+    <div style="font-size:19px;font-weight:800;color:${a};letter-spacing:-.3px;line-height:1;">${P.last}</div>
+    <div style="font-size:11.5px;color:${t.sub};font-weight:600;margin-top:6px;">${P.title}</div>
+    <div style="font-size:11.5px;color:${t.faint};">${P.company}</div>
+    <div style="margin-top:11px;">${socials(t.faint,16,true)}</div>
+  </div>`;
+  const right=`<div style="font-family:${FONT};">
+    <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+      <tr><td style="line-height:0;padding:0 8px 7px 0;">${svg(ICON.phone,a,13)}</td><td style="color:${t.sub};font-size:12px;padding-bottom:7px;white-space:nowrap;">${P.phone}</td></tr>
+      <tr><td style="line-height:0;padding:0 8px 7px 0;">${svg(ICON.email,a,13)}</td><td style="color:${t.sub};font-size:12px;padding-bottom:7px;white-space:nowrap;">${P.email}</td></tr>
+      <tr><td style="line-height:0;padding:0 8px 7px 0;">${svg(ICON.web,a,13)}</td><td style="color:${t.sub};font-size:12px;padding-bottom:7px;white-space:nowrap;">${P.web}</td></tr>
+      <tr><td style="line-height:0;padding:0 8px 0 0;">${svg(ICON.pin,a,13)}</td><td style="color:${t.sub};font-size:12px;white-space:nowrap;">${P.address}</td></tr>
+    </table>
+  </div>`;
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;">
+    <tr>
+      <td style="vertical-align:middle;padding-right:20px;">${left}</td>
+      <td style="width:4px;background:${a};font-size:0;line-height:0;">&nbsp;</td>
+      <td style="vertical-align:middle;padding-left:20px;">${right}</td>
+    </tr>
+  </table>`;
+}
+
+/* 4. HUGE MONOGRAM — initials blown up as a graphic anchor, content beside. */
+function bigMono(t,a){
+  const mono=`<table cellpadding="0" cellspacing="0" style="border-collapse:separate;width:104px;height:104px;background:${a};border-radius:16px;"><tr><td style="width:104px;height:104px;text-align:center;vertical-align:middle;font-family:${SERIF};font-size:46px;font-weight:700;color:#fff;letter-spacing:1px;">${P.initials}</td></tr></table>`;
+  const right=`<div style="font-family:${FONT};">
+    <div style="font-size:19px;font-weight:800;color:${t.ink};letter-spacing:-.3px;">${P.first} <span style="color:${a};">${P.last}</span></div>
+    <div style="font-size:12px;color:${t.sub};font-weight:600;margin:3px 0 11px;">${P.title} · ${P.company}</div>
+    <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+      <tr><td style="line-height:0;padding:0 7px 6px 0;">${svg(ICON.email,a,13)}</td><td style="color:${t.sub};font-size:12px;padding-bottom:6px;white-space:nowrap;">${P.email}</td>
+          <td style="line-height:0;padding:0 7px 6px 18px;">${svg(ICON.phone,a,13)}</td><td style="color:${t.sub};font-size:12px;padding-bottom:6px;white-space:nowrap;">${P.phone}</td></tr>
+      <tr><td style="line-height:0;padding:0 7px 0 0;">${svg(ICON.web,a,13)}</td><td style="color:${t.sub};font-size:12px;white-space:nowrap;">${P.web}</td>
+          <td style="line-height:0;padding:0 7px 0 18px;">${svg(ICON.pin,a,13)}</td><td style="color:${t.sub};font-size:12px;white-space:nowrap;">${P.address}</td></tr>
+    </table>
+    <div style="margin-top:11px;">${socials(t.faint,16,true)}</div>
+  </div>`;
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;">
+    <tr><td style="vertical-align:middle;padding-right:20px;">${mono}</td><td style="vertical-align:middle;">${right}</td></tr>
+  </table>`;
+}
+
+/* 5. DIRECTORY — contact info as an indexed spec sheet with numbered labels. */
+function directory(t,a){
+  const head=`<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+    <tr><td style="vertical-align:middle;padding-right:14px;">${anchor(56,null,a)}</td>
+    <td style="vertical-align:middle;"><div style="font-family:${FONT};font-size:17px;font-weight:800;color:${t.ink};letter-spacing:-.2px;">${P.first} <span style="color:${a};">${P.last}</span></div>
+    <div style="font-family:${FONT};font-size:12px;color:${t.sub};margin-top:2px;">${P.title} · ${P.company}</div></td></tr></table>`;
+  const row=(n,label,val)=>`<tr>
+    <td style="font-family:${FONT};font-size:10px;font-weight:800;color:${a};padding:0 12px 8px 0;vertical-align:top;letter-spacing:.05em;">${n}</td>
+    <td style="font-family:${FONT};font-size:9.5px;font-weight:700;color:${t.faint};text-transform:uppercase;letter-spacing:.08em;padding:2px 14px 8px 0;vertical-align:top;white-space:nowrap;">${label}</td>
+    <td style="font-family:${FONT};font-size:12.5px;color:${t.sub};padding-bottom:8px;vertical-align:top;white-space:nowrap;">${val}</td></tr>`;
+  const grid=`<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;">${row("01","Email",P.email)}${row("02","Phone",P.phone)}${row("03","Web",P.web)}${row("04","Studio",P.address)}</table>`;
+  return `<div style="max-width:440px;">${head}<div style="border-top:1px solid ${t.rule};margin:14px 0;"></div>${grid}</div>`;
+}
+
+/* 6. FULL-BLEED PHOTO BANNER — square photo flush-left, edge to edge, text vertically centered beside. */
+function bleedLeft(t,a){
+  const right=`<div style="font-family:${FONT};">
+    <div style="font-size:19px;font-weight:800;color:${t.ink};letter-spacing:-.3px;">${P.first} <span style="color:${a};">${P.last}</span></div>
+    <div style="font-size:11.5px;color:${a};font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;">${P.title}</div>
+    <div style="font-size:12px;color:${t.faint};margin-top:1px;">${P.company}</div>
+    <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;margin-top:13px;">
+      <tr><td style="line-height:0;padding:0 7px 6px 0;">${svg(ICON.email,a,13)}</td><td style="color:${t.sub};font-size:12px;padding-bottom:6px;white-space:nowrap;">${P.email}</td></tr>
+      <tr><td style="line-height:0;padding:0 7px 6px 0;">${svg(ICON.phone,a,13)}</td><td style="color:${t.sub};font-size:12px;padding-bottom:6px;white-space:nowrap;">${P.phone}</td></tr>
+      <tr><td style="line-height:0;padding:0 7px 0 0;">${svg(ICON.web,a,13)}</td><td style="color:${t.sub};font-size:12px;white-space:nowrap;">${P.web}</td></tr>
+    </table>
+  </div>`;
+  const visual = ANCHOR==="logo"
+    ? `<td width="120" style="width:120px;background:${a};vertical-align:middle;text-align:center;padding:24px 0;border-radius:12px 0 0 12px;">${logoBox(40,false)}</td>`
+    : `<td width="120" style="width:120px;vertical-align:top;line-height:0;font-size:0;">${headshotSquare(120)}</td>`;
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:separate;border-spacing:0;border:1px solid ${t.rule};border-radius:12px;overflow:hidden;max-width:460px;">
+    <tr>${visual}<td style="vertical-align:middle;padding:20px 22px;">${right}</td></tr>
+  </table>`;
+}
+
+/* 7. TOP ICON RAIL — social + contact live in a full-width colored rail across the top; identity below. */
+function topRail(t,a){
+  const rail=`<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;background:${a};border-radius:10px 10px 0 0;"><tr>
+    <td style="padding:9px 18px;vertical-align:middle;font-family:${FONT};font-size:11.5px;color:#fff;font-weight:600;letter-spacing:.03em;">${P.email} &nbsp;&nbsp;|&nbsp;&nbsp; ${P.phone}</td>
+    <td style="padding:9px 18px;vertical-align:middle;text-align:right;">${socials("#ffffff",16,false)}</td>
+  </tr></table>`;
+  const body=`<table cellpadding="0" cellspacing="0" style="border-collapse:collapse;"><tr>
+    <td style="vertical-align:middle;padding-right:16px;">${anchor(62,null,a)}</td>
+    <td style="vertical-align:middle;"><div style="font-family:${FONT};">
+      <div style="font-size:18px;font-weight:800;color:${t.ink};letter-spacing:-.2px;">${P.first} <span style="color:${a};">${P.last}</span></div>
+      <div style="font-size:12px;color:${t.sub};margin-top:2px;">${P.title} · ${P.company}</div>
+      <div style="font-size:12px;color:${t.faint};margin-top:6px;">${P.web} · ${P.address}</div>
+    </div></td>
+  </tr></table>`;
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:separate;border-spacing:0;border:1px solid ${t.rule};border-radius:10px;overflow:hidden;max-width:470px;">
+    <tr><td style="padding:0;">${rail}</td></tr><tr><td style="padding:18px 20px;background:${t.surface};">${body}</td></tr>
+  </table>`;
+}
+
+/* 8. OFF-CENTER ANCHOR — deliberate asymmetry, logo/photo pinned far right, text weighted left. */
+function offCenter(t,a){
+  const left=`<div style="font-family:${FONT};">
+    <div style="font-size:20px;font-weight:800;color:${t.ink};letter-spacing:-.3px;">${P.first} <span style="color:${a};">${P.last}</span></div>
+    <div style="font-size:11.5px;color:${a};font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin:4px 0 12px;">${P.title} · ${P.company}</div>
+    <span style="font-family:${FONT};font-size:12px;color:${t.sub};">${P.email} &nbsp;·&nbsp; ${P.phone} &nbsp;·&nbsp; ${P.web}</span>
+    <div style="margin-top:12px;">${socials(t.faint,17,true)}</div>
+  </div>`;
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;max-width:500px;">
+    <tr><td style="vertical-align:top;padding-right:24px;">${left}</td>
+    <td style="vertical-align:top;text-align:right;width:80px;">${anchor(80,a,a)}</td></tr>
+  </table>`;
+}
+
+/* 9. VERTICAL NAME RAIL — name runs bottom-to-top on a color rail. IMAGE-ONLY (rotate). */
+function nameRail(t,a){
+  const rail=`<td width="52" style="width:52px;background:${a};vertical-align:middle;text-align:center;border-radius:10px 0 0 10px;">
+    <div style="font-family:${FONT};font-size:15px;font-weight:800;color:#fff;letter-spacing:2px;line-height:1.15;padding:14px 0;">R<br>U<br>T<br>H<br>N<br>I<br>E</div>
+  </td>`;
+  const body=`<td style="padding:20px 22px;vertical-align:middle;background:${t.surface};">
+    <div style="font-family:${FONT};">
+      <div style="font-size:19px;font-weight:800;color:${t.ink};letter-spacing:-.2px;">${P.first} <span style="color:${a};">${P.last}</span></div>
+      <div style="font-size:12px;color:${t.sub};margin:3px 0 12px;">${P.title} · ${P.company}</div>
+      <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;">
+        <tr><td style="line-height:0;padding:0 7px 6px 0;">${svg(ICON.email,a,13)}</td><td style="color:${t.sub};font-size:12px;padding-bottom:6px;white-space:nowrap;">${P.email}</td></tr>
+        <tr><td style="line-height:0;padding:0 7px 6px 0;">${svg(ICON.phone,a,13)}</td><td style="color:${t.sub};font-size:12px;padding-bottom:6px;white-space:nowrap;">${P.phone}</td></tr>
+        <tr><td style="line-height:0;padding:0 7px 0 0;">${svg(ICON.web,a,13)}</td><td style="color:${t.sub};font-size:12px;white-space:nowrap;">${P.web}</td></tr>
+      </table>
+      <div style="margin-top:11px;">${socials(t.faint,16,true)}</div>
+    </div>
+  </td>`;
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:separate;border-spacing:0;border:1px solid ${t.rule};border-radius:10px;overflow:hidden;max-width:440px;"><tr>${rail}${body}</tr></table>`;
+}
+
+/* 10. TICKET STUB — main body + a dashed-perforation tear-off stub holding the CTA. */
+function ticket(t,a){
+  const body=`<td style="padding:18px 20px;vertical-align:middle;background:${t.surface};">
+    <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;"><tr>
+      <td style="vertical-align:middle;padding-right:14px;">${anchor(56,null,a)}</td>
+      <td style="vertical-align:middle;"><div style="font-family:${FONT};">
+        <div style="font-size:17px;font-weight:800;color:${t.ink};letter-spacing:-.2px;">${P.first} <span style="color:${a};">${P.last}</span></div>
+        <div style="font-size:11.5px;color:${t.sub};margin:2px 0 9px;">${P.title} · ${P.company}</div>
+        <span style="font-family:${FONT};font-size:11.5px;color:${t.faint};">${P.email} · ${P.phone}</span>
+      </div></td>
+    </tr></table></td>`;
+  const stub=`<td width="120" style="width:120px;border-left:2px dashed ${t.rule};padding:18px 14px;vertical-align:middle;text-align:center;background:${t.surface};">
+    ${logoBox(26,false)}
+    <a href="#" style="display:block;margin-top:12px;background:${a};color:#fff;font-family:${FONT};font-size:11.5px;font-weight:700;text-decoration:none;padding:8px 6px;border-radius:6px;text-transform:uppercase;letter-spacing:.03em;">${P.book}</a>
+  </td>`;
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:separate;border-spacing:0;border:1px solid ${t.rule};border-radius:10px;overflow:hidden;max-width:480px;"><tr>${body}${stub}</tr></table>`;
+}
+
+/* 11. DIAGONAL SPLIT — brand triangle upper-left, content lower-right. IMAGE-ONLY (real diagonal). */
+function diagonal(t,a){
+  // Simulated preview: a solid triangle via border trick sits behind a corner; real version is a baked PNG.
+  const tri=`<div style="width:0;height:0;border-top:150px solid ${a};border-right:150px solid transparent;position:absolute;top:0;left:0;"></div>`;
+  const nameOnColor=`<div style="position:absolute;top:20px;left:20px;font-family:${SERIF};font-size:20px;font-weight:700;color:#fff;line-height:1.05;">${P.first}<br>${P.last}</div>`;
+  const content=`<div style="position:relative;text-align:right;padding-top:70px;font-family:${FONT};">
+    <div style="font-size:12px;color:${a};font-weight:700;text-transform:uppercase;letter-spacing:.04em;">${P.title}</div>
+    <div style="font-size:12px;color:${t.faint};margin-bottom:12px;">${P.company}</div>
+    <div style="font-size:12px;color:${t.sub};line-height:1.7;">${P.email}<br>${P.phone}<br>${P.web}</div>
+    <div style="margin-top:10px;">${socials(t.faint,16,true)}</div>
+  </div>`;
+  return `<div style="position:relative;max-width:420px;border:1px solid ${t.rule};border-radius:12px;overflow:hidden;padding:24px;background:${t.surface};">${tri}${nameOnColor}${content}</div>`;
+}
+
+/* 12. STACKED BLOCKS — three full-width horizontal bands (identity / contact ribbon / CTA), color-separated. */
+function bands(t,a){
+  const b1=`<td style="padding:16px 20px;background:${a};border-radius:11px 11px 0 0;vertical-align:middle;">
+    <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;"><tr>
+      <td style="vertical-align:middle;"><div style="font-family:${FONT};font-size:19px;font-weight:800;color:#fff;letter-spacing:-.2px;">${NAME}</div>
+        <div style="font-family:${FONT};font-size:11.5px;color:rgba(255,255,255,.85);margin-top:2px;text-transform:uppercase;letter-spacing:.04em;">${P.title}</div></td>
+      <td style="text-align:right;vertical-align:middle;">${ANCHOR==="logo"?logoBox(30,true):headshot(56,"#ffffff")}</td>
+    </tr></table></td>`;
+  const b2=`<td style="padding:13px 20px;background:${t.surface};vertical-align:middle;">
+    <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;"><tr>
+      <td style="text-align:center;font-family:${FONT};font-size:12px;color:${t.sub};"> ${svg(ICON.email,a,13).replace('display:block','display:inline-block;vertical-align:middle;margin-right:5px')} ${P.email}</td>
+      <td style="text-align:center;border-left:1px solid ${t.rule};font-family:${FONT};font-size:12px;color:${t.sub};">${svg(ICON.phone,a,13).replace('display:block','display:inline-block;vertical-align:middle;margin-right:5px')} ${P.phone}</td>
+      <td style="text-align:center;border-left:1px solid ${t.rule};font-family:${FONT};font-size:12px;color:${t.sub};">${svg(ICON.web,a,13).replace('display:block','display:inline-block;vertical-align:middle;margin-right:5px')} ${P.web}</td>
+    </tr></table></td>`;
+  const b3=`<td style="padding:11px 20px;background:${t.band};border-radius:0 0 11px 11px;vertical-align:middle;">
+    <table cellpadding="0" cellspacing="0" style="border-collapse:collapse;width:100%;"><tr>
+      <td style="vertical-align:middle;">${socials(t.faint,17,true)}</td>
+      <td style="text-align:right;vertical-align:middle;"><a href="#" style="font-family:${FONT};font-size:12px;font-weight:700;color:${a};text-decoration:none;">${P.book} &rarr;</a></td>
+    </tr></table></td>`;
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:separate;border-spacing:0;border:1px solid ${t.rule};border-radius:11px;overflow:hidden;max-width:480px;">
+    <tr>${b1}</tr><tr>${b2}</tr><tr>${b3}</tr></table>`;
+}
+
+/* ---- registry ---- */
+const SIGS=[
+  {fn:wings,    name:"Symmetric Wings", kind:"html", move:"Contact split into two mirrored wings; identity centered between them.",
+    desc:"The one you flagged. Reads inward from both edges — nothing sits where a normal signature puts it."},
+  {fn:masthead, name:"The Masthead",   kind:"html", move:"Name set huge and full-width like a magazine nameplate; everything else small beneath a rule.",
+    desc:"The name IS the design. Title, contact and social shrink to a quiet credits strip under an editorial rule."},
+  {fn:spine,    name:"The Spine",      kind:"html", move:"A bold color bar down the middle; identity hangs off the left, contact off the right.",
+    desc:"The divider isn't a faint separator — it's the loudest element, and the content leans on it from both sides."},
+  {fn:bigMono,  name:"Giant Monogram", kind:"html", move:"Initials blown up to 104px as a graphic block, not a tiny avatar.",
+    desc:"A serif RB the size of the whole signature becomes the logo. Works with zero photo — the monogram is the star."},
+  {fn:directory,name:"The Index",      kind:"html", move:"Contact info formatted as a numbered spec-sheet: 01 EMAIL, 02 PHONE, aligned like a directory.",
+    desc:"Borrowed from product labels. Numbered, labeled, aligned columns — reads like a catalog entry, not a contact list."},
+  {fn:bleedLeft,name:"Full-Bleed Photo",kind:"html", move:"Square photo flush to the card edge, full height; text vertically centered beside it.",
+    desc:"No rounded avatar floating in space — the photo is an edge-to-edge panel. (Logo mode fills the panel with color.)"},
+  {fn:topRail,  name:"Contact Rail",   kind:"html", move:"Email, phone and socials live in a colored rail across the TOP; identity sits below it.",
+    desc:"Inverts the usual order — the contact bar caps the signature, and your name/photo read as the body beneath."},
+  {fn:offCenter,name:"Off-Center",     kind:"html", move:"Deliberate asymmetry — anchor pinned to the far right, all text weighted left.",
+    desc:"Rejects the centered/left-balanced default. The imbalance creates tension and makes the eye move."},
+  {fn:ticket,   name:"Ticket Stub",    kind:"html", move:"A dashed 'perforation' splits a main body from a tear-off stub holding the logo + CTA.",
+    desc:"Structure stolen from a ticket. The stub is a distinct zone — the CTA gets its own little panel."},
+  {fn:nameRail, name:"Vertical Name Rail", kind:"img", move:"The first name runs vertically up a color rail on the left edge, like a lanyard badge.",
+    desc:"Shown here stacked letter-by-letter as a live preview; the TRUE rotated version is a baked image (Gmail strips rotate)."},
+  {fn:diagonal, name:"Diagonal Split", kind:"img", move:"A brand-color triangle cuts the corner; name reversed on the color, contact on the white.",
+    desc:"A real diagonal edge only exists as a rendered image. This is a rough preview — the shipped version is a PNG with clickable zones."},
+  {fn:bands,    name:"Stacked Bands",  kind:"html", move:"Three full-width horizontal bands — color identity / contact ribbon / CTA strip — separated by color, not spacing.",
+    desc:"Zones stacked as solid color bands. The saturated top band carries the name; contact runs as a ribbon; CTA gets its own footer."},
+];
+
+function render(){
+  const g=document.getElementById("gallery"); g.innerHTML="";
+  const a=accentFor();
+  const t = CANVAS==="dark"
+    ? {ink:"#f0f2f5",sub:"#aeb4bf",faint:"#7c828d",rule:"#33383f",surface:"#1c1f26",band:"#20242c"}
+    : {ink:"#171a1f",sub:"#5b6270",faint:"#98a0ad",rule:"#e3e6ea",surface:"#ffffff",band:"#f7f8fb"};
+  SIGS.forEach((s,i)=>{
+    const sig=s.fn(t,a);
+    const card=document.createElement("div"); card.className="spec";
+    card.innerHTML=`
+      <div class="spec-head">
+        <div class="spec-title-row">
+          <span class="spec-name"><span class="spec-num">${String(i+1).padStart(2,"0")}</span> &nbsp;${s.name}</span>
+          <span class="spec-tag ${s.kind==="html"?"tag-html":"tag-img"}">${s.kind==="html"?"Live HTML":"Image only"}</span>
+        </div>
+        <div class="spec-move">↳ ${s.move}</div>
+        <div class="spec-desc">${s.desc}</div>
+      </div>
+      <div class="canvas canvas--${CANVAS}">${sig}</div>`;
+    g.appendChild(card);
+  });
+}
+function wire(id,fn){ document.getElementById(id).addEventListener("click",e=>{ const b=e.target.closest("button"); if(!b) return;
+  document.querySelectorAll(`#${id} button`).forEach(x=>x.setAttribute("aria-pressed",x===b)); fn(b); }); }
+wire("canvasSeg",b=>{CANVAS=b.dataset.canvas;render();});
+wire("swatches", b=>{ACCENT=b.dataset.accent;render();});
+wire("anchorSeg",b=>{ANCHOR=b.dataset.anchor;render();});
+wire("themeSeg", b=>{document.documentElement.setAttribute("data-theme",b.dataset.theme);});
+render();
+</script>

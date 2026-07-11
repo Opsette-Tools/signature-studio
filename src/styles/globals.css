@@ -124,6 +124,66 @@ a:hover {
   display: inline-block;
 }
 
+/* Brand tab — preset accent swatches + two-tone toggle */
+.brand-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.brand-swatch {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  border: 2px solid transparent;
+  box-shadow: 0 0 0 1px var(--color-border);
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.08s ease, box-shadow 0.08s ease;
+}
+.brand-swatch:hover {
+  transform: translateY(-1px);
+}
+.brand-swatch.is-active {
+  border-color: var(--color-surface);
+  box-shadow: 0 0 0 2px var(--color-text);
+}
+.brand-swatch:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+.brand-swatch--custom {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-surface-2);
+  color: var(--color-text-secondary);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1;
+}
+.brand-swatch--custom input[type="color"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  border: 0;
+  padding: 0;
+}
+.brand-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.brand-name-example {
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
 /* Studio (single-page workspace) */
 .studio {
   display: flex;
@@ -430,7 +490,7 @@ a:hover {
   gap: 4px;
 }
 
-/* Signature preview surface */
+/* Plain framed signature surface — used by the Copy panel's "Rich preview" tab. */
 .signature-preview {
   background: #ffffff;
   border: 1px solid var(--color-border);
@@ -438,14 +498,128 @@ a:hover {
   padding: var(--space-5);
   color: #1a1f2e;
   overflow-x: auto;
-  min-height: 160px;
+  min-height: 120px;
 }
 
-.signature-preview__empty {
+/* ------------------------------------------------------------------ *
+   Inbox mock for the MAIN preview. A bare signature dropped in an empty
+   white box reads as flimsy — the same signature framed inside a real
+   message window reads as designed. The outer .sig-inbox is the
+   recipient's inbox canvas (light or dark, independent of the app theme);
+   the inner window is the open message the signature actually lands in.
+ * ------------------------------------------------------------------ */
+.sig-inbox {
+  border-radius: var(--radius-lg, 14px);
+  padding: clamp(16px, 3vw, 34px);
+  overflow-x: auto;
+  min-height: 200px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+.sig-inbox--light {
+  background: #eceef2;
+  background-image: radial-gradient(rgba(20, 24, 34, 0.045) 0.5px, transparent 0.5px);
+  background-size: 15px 15px;
+}
+.sig-inbox--dark {
+  background: #0f1114;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.035) 0.5px, transparent 0.5px);
+  background-size: 15px 15px;
+}
+
+.sig-inbox__window {
+  width: 100%;
+  max-width: 560px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow:
+    0 1px 2px rgba(16, 20, 28, 0.06),
+    0 12px 32px rgba(16, 20, 28, 0.12);
+}
+.sig-inbox--light .sig-inbox__window {
+  background: #ffffff;
+  border: 1px solid #e4e7ec;
+}
+.sig-inbox--dark .sig-inbox__window {
+  background: #1b1e24;
+  border: 1px solid #2c313a;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.4),
+    0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.sig-inbox__chrome {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 11px 16px;
+  border-bottom: 1px solid;
+}
+.sig-inbox--light .sig-inbox__chrome {
+  background: #f7f8fa;
+  border-color: #edeff2;
+}
+.sig-inbox--dark .sig-inbox__chrome {
+  background: #22262e;
+  border-color: #2c313a;
+}
+.sig-inbox__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #d3d7de;
+}
+.sig-inbox--dark .sig-inbox__dot {
+  background: #3a4049;
+}
+.sig-inbox__dot:nth-child(1) {
+  background: #f2a598;
+}
+.sig-inbox__dot:nth-child(2) {
+  background: #f5cf8f;
+}
+.sig-inbox__dot:nth-child(3) {
+  background: #a9d6a0;
+}
+.sig-inbox__from {
+  margin-left: 10px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: #9aa1ac;
+}
+.sig-inbox--dark .sig-inbox__from {
+  color: #767d88;
+}
+
+.sig-inbox__body {
+  padding: 22px 24px 26px;
+}
+.sig-inbox__tail {
+  margin: 0 0 18px;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #b3b9c2;
+}
+.sig-inbox--dark .sig-inbox__tail {
+  color: #5f6672;
+}
+.sig-inbox__signature {
+  overflow-x: auto;
+}
+
+.sig-inbox__empty {
   color: #8a93a6;
   font-size: 13px;
   text-align: center;
-  padding: var(--space-6) 0;
+  padding: var(--space-6) var(--space-4);
+  max-width: 460px;
+}
+.sig-inbox--dark .sig-inbox__empty {
+  color: #767d88;
 }
 
 /* Code block */

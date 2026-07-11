@@ -1,4 +1,5 @@
 import { Form, Input, Tabs } from "antd";
+import { BrandControls } from "./BrandControls";
 import { ImageUploader } from "./ImageUploader";
 import { SectionCard } from "@/components/ui/SectionCard";
 import type { SignatureData } from "@/types/signature";
@@ -24,6 +25,15 @@ export function SignatureForm({ data, onChange }: Props) {
     <Tabs
       defaultActiveKey="identity"
       items={[
+        {
+          key: "brand",
+          label: "Brand",
+          children: (
+            <SectionCard hint="Set your brand color once and it flows through every template — this is what makes the set feel designed and coherent.">
+              <BrandControls data={data} onChange={onChange} />
+            </SectionCard>
+          ),
+        },
         {
           key: "identity",
           label: "Identity",

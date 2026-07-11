@@ -45,7 +45,9 @@ export function sanitizeSignatureData(input: Partial<SignatureData>): SignatureD
     ctaLabel: trim(input.ctaLabel),
     ctaUrl: trim(input.ctaUrl),
     disclaimer: trim(input.disclaimer),
-    accentColor: trim(input.accentColor) || "#4f46e5",
+    accentColor: trim(input.accentColor) || "#c2410c",
+    // Default ON when unset (legacy saved signatures predate this field).
+    twoToneName: input.twoToneName !== false,
   };
 }
 

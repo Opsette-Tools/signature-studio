@@ -1,11 +1,11 @@
 import { AppstoreOutlined, CopyOutlined, EyeOutlined } from "@ant-design/icons";
-import { Drawer, Grid } from "antd";
+import { Drawer, Grid, Segmented } from "antd";
 import { useState } from "react";
 import { CopyPanel } from "@/components/signature/CopyPanel";
 import { DemoBanner } from "@/components/signature/DemoBanner";
 import { SavedSignatures } from "@/components/signature/SavedSignatures";
 import { SignatureForm } from "@/components/signature/SignatureForm";
-import { SignaturePreview } from "@/components/signature/SignaturePreview";
+import { SignaturePreview, type PreviewCanvas } from "@/components/signature/SignaturePreview";
 import { TemplateFilters, type FilterState } from "@/components/signature/TemplateFilters";
 import { TemplateGallery } from "@/components/signature/TemplateGallery";
 import { TemplateStrip } from "@/components/signature/TemplateStrip";
@@ -38,6 +38,19 @@ export function StudioPage() {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [copyOpen, setCopyOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>(initialFilters);
+  const [canvas, setCanvas] = useState<PreviewCanvas>("light");
+
+  const canvasToggle = (
+    <Segmented
+      size="small"
+      value={canvas}
+      onChange={(v) => setCanvas(v as PreviewCanvas)}
+      options={[
+        { label: "Light inbox", value: "light" },
+        { label: "Dark inbox", value: "dark" },
+      ]}
+    />
+  );
 
   const browseGallery = (
     <div className="stack">
@@ -55,8 +68,11 @@ export function StudioPage() {
   );
 
   const previewBlock = (
-    <SectionCard title={selectedTemplate ? `Preview · ${selectedTemplate.name}` : "Preview"}>
-      <SignaturePreview template={selectedTemplate} data={data} />
+    <SectionCard
+      title={selectedTemplate ? `Preview · ${selectedTemplate.name}` : "Preview"}
+      extra={canvasToggle}
+    >
+      <SignaturePreview template={selectedTemplate} data={data} canvas={canvas} />
     </SectionCard>
   );
 
@@ -113,9 +129,10 @@ export function StudioPage() {
         height="85%"
         open={previewOpen}
         onClose={() => setPreviewOpen(false)}
+        extra={canvasToggle}
         destroyOnHidden
       >
-        <SignaturePreview template={selectedTemplate} data={data} />
+        <SignaturePreview template={selectedTemplate} data={data} canvas={canvas} />
       </Drawer>
 
       <Drawer

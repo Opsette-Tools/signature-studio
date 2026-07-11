@@ -31,6 +31,7 @@ export const SHARED_FIELDS = [
   "logoUrl",
   "logoDataUrl",
   "accentColor",
+  "twoToneName",
   "address",
   "website",
   "disclaimer",
@@ -72,7 +73,9 @@ export function buildPayload(opts: {
     for (const k of SHARED_FIELDS) {
       const v = data[k];
       if (typeof v === "string" && v.length > 0) {
-        d[k] = v;
+        d[k] = v as never;
+      } else if (typeof v === "boolean") {
+        d[k] = v as never;
       }
     }
   } else {
@@ -81,6 +84,8 @@ export function buildPayload(opts: {
     for (const k of Object.keys(data) as (keyof SignatureData)[]) {
       const v = data[k];
       if (typeof v === "string" && v.length > 0) {
+        d[k] = v as never;
+      } else if (typeof v === "boolean") {
         d[k] = v as never;
       }
     }
@@ -159,13 +164,13 @@ export function classifyUrlLength(len: number): UrlSizeBand {
 export function applySharePayload(payload: SharePayload): SignatureData {
   const base: SignatureData = { ...emptySignatureData };
   for (const [k, v] of Object.entries(payload.d)) {
-    if (k in base && typeof v === "string") {
-      (base as Record<string, string>)[k] = v;
+    if (k in base && (typeof v === "string" || typeof v === "boolean")) {
+      (base as Record<string, unknown>)[k] = v;
     }
   }
   if (payload.mode === "kit") {
     for (const f of PERSONAL_FIELDS) {
-      (base as Record<string, string>)[f] = "";
+      (base as Record<string, unknown>)[f] = "";
     }
   }
   return sanitizeSignatureData(base);

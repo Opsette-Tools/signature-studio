@@ -1,5 +1,5 @@
 import type { SignatureData } from "@/types/signature";
-import { normalizeUrl } from "./sanitizeSignatureData";
+import { getResolvedLogo, normalizeUrl } from "./sanitizeSignatureData";
 
 /**
  * Helpers for building email-safe signature HTML.
@@ -11,6 +11,9 @@ import { normalizeUrl } from "./sanitizeSignatureData";
 
 export const fontStack =
   "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+
+/** Serif stack used by editorial / masthead / monogram templates. */
+export const serifStack = "Georgia, 'Times New Roman', serif";
 
 export function td(content: string, style = ""): string {
   return `<td style="${style}">${content}</td>`;
@@ -116,6 +119,20 @@ type SocialKey =
   | "youtube"
   | "tiktok";
 
+/**
+ * Real brand colors — the "pop." Instagram pink, LinkedIn blue, etc. Used by
+ * the `brand` variant of the social row so the icons read as the actual marks,
+ * not a flat monochrome wash. (Lesson #2 of the v2 rebuild.)
+ */
+export const BRAND_COLOR: Record<SocialKey, string> = {
+  linkedin: "#0A66C2",
+  twitter: "#000000",
+  instagram: "#E4405F",
+  facebook: "#1877F2",
+  youtube: "#FF0000",
+  tiktok: "#000000",
+};
+
 const SOCIAL_PATHS: Record<SocialKey, string> = {
   linkedin:
     "M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.13 1.45-2.13 2.94v5.67H9.35V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.8 0 0 .78 0 1.74v20.51C0 23.22.8 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.75V1.74C24 .78 23.2 0 22.22 0z",
@@ -133,7 +150,15 @@ const SOCIAL_PATHS: Record<SocialKey, string> = {
 
 export function socialIconsRow(
   data: SignatureData,
-  opts: { color?: string; size?: number; variant?: "chip" | "plain"; gap?: number } = {},
+  opts: {
+    color?: string;
+    size?: number;
+    variant?: "chip" | "plain" | "brand";
+    gap?: number;
+    /** For the "chip" variant: fill each chip with the real brand color
+     *  instead of a single accent. The v2 "pop." */
+    brandChips?: boolean;
+  } = {},
 ): string {
   const color = opts.color || "#5b6478";
   const size = opts.size || 22;
@@ -153,12 +178,17 @@ export function socialIconsRow(
   };
   return items
     .map((i) => {
+      // "brand": no chip — the naked glyph tinted its real brand color.
+      if (variant === "brand") {
+        return `<a href="${normalizeUrl(i.url)}" style="display:inline-block;margin-right:${gap + 2}px;text-decoration:none;line-height:0;vertical-align:middle;">${glyph(i.key, BRAND_COLOR[i.key], size)}</a>`;
+      }
       if (variant === "plain") {
         return `<a href="${normalizeUrl(i.url)}" style="display:inline-block;margin-right:${gap + 2}px;text-decoration:none;line-height:0;vertical-align:middle;">${glyph(i.key, color, size)}</a>`;
       }
+      const chipBg = opts.brandChips ? BRAND_COLOR[i.key] : color;
       const chip = Math.round(size * 1.55);
       const pad = Math.round((chip - size) / 2);
-      return `<a href="${normalizeUrl(i.url)}" style="display:inline-block;margin-right:${gap}px;width:${chip}px;height:${chip}px;border-radius:${Math.round(chip / 4)}px;background:${color};text-decoration:none;line-height:0;vertical-align:middle;"><span style="display:inline-block;padding:${pad}px;line-height:0;">${glyph(i.key, "#ffffff", size)}</span></a>`;
+      return `<a href="${normalizeUrl(i.url)}" style="display:inline-block;margin-right:${gap}px;width:${chip}px;height:${chip}px;border-radius:${Math.round(chip / 4)}px;background:${chipBg};text-decoration:none;line-height:0;vertical-align:middle;"><span style="display:inline-block;padding:${pad}px;line-height:0;">${glyph(i.key, "#ffffff", size)}</span></a>`;
     })
     .join("");
 }
@@ -370,7 +400,10 @@ const ICON_PATHS: Record<ContactIconKey, string> = {
     "M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z",
 };
 
-function contactIcon(key: ContactIconKey, color: string, size: number): string {
+/** A single contact glyph (envelope / phone / globe / pin) as a data-URI <img>,
+ *  tinted to `color`. Exported so the v2 structural templates (Spine, Index,
+ *  Wings, …) can lay their own contact rows instead of the stacked contactGrid. */
+export function contactIcon(key: ContactIconKey, color: string, size: number): string {
   const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24" fill="${color}"><path d="${ICON_PATHS[key]}"/></svg>`;
   const dataUri = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
   return `<img src="${dataUri}" alt="" width="${size}" height="${size}" style="display:block;width:${size}px;height:${size}px;" />`;
@@ -484,4 +517,209 @@ export function zonedCard(
     ? `<div style="background:${footerBg};border:1px solid ${border};border-top:0;padding:10px 14px;border-radius:0 0 ${radius}px ${radius}px;">${zones.footer}</div>`
     : "";
   return `<div style="font-family:${fontStack};max-width:${maxWidth}px;">${header}${body}${footer}</div>`;
+}
+
+/* ================================================================== *
+ *  v2 STRUCTURAL PRIMITIVES (the "unexpected structures" rebuild)
+ *
+ *  These power the templates that break the name-top/contacts-stacked
+ *  formula — Symmetric Wings, Masthead, Spine, Giant Monogram, Index,
+ *  Full-Bleed, Contact Rail, Off-Center, Ticket Stub, Stacked Bands.
+ *  Ported from docs/signature-premium-mockup-v3.html. Every one is
+ *  email-safe (tables + inline styles, no flex/gradient/shadow/rotate)
+ *  and driven by the single `accentColor` field so recoloring the whole
+ *  kit is one value.
+ * ================================================================== */
+
+/**
+ * A rendered surface's color set. A signature inherits the RECIPIENT'S inbox
+ * canvas, which may be light or dark — independent of the app's own theme. Every
+ * v2 template takes a `Surface` so the preview can show it on both. `on` is the
+ * text color that sits on top of a filled accent block (always white here).
+ */
+export type Surface = {
+  ink: string;
+  sub: string;
+  faint: string;
+  rule: string;
+  surface: string;
+  band: string;
+  on: string;
+};
+
+export const LIGHT_SURFACE: Surface = {
+  ink: "#171a1f",
+  sub: "#5b6270",
+  faint: "#98a0ad",
+  rule: "#e3e6ea",
+  surface: "#ffffff",
+  band: "#f7f8fb",
+  on: "#ffffff",
+};
+
+export const DARK_SURFACE: Surface = {
+  ink: "#f0f2f5",
+  sub: "#aeb4bf",
+  faint: "#7c828d",
+  rule: "#33383f",
+  surface: "#1c1f26",
+  band: "#20242c",
+  on: "#ffffff",
+};
+
+/**
+ * On a dark inbox the raw brand hex can go muddy, so lighten it. Mirrors the
+ * mockup's `accentFor()` — a small curated map with a graceful passthrough for
+ * anything not listed (the user's arbitrary accentColor still renders, just
+ * un-brightened, which is acceptable for a first pass).
+ */
+const DARK_ACCENT: Record<string, string> = {
+  "#c2410c": "#fb923c",
+  "#4338ca": "#a5b4fc",
+  "#0f766e": "#5eead4",
+  "#be123c": "#fda4af",
+  "#0e1420": "#94a3b8",
+  "#4f46e5": "#a5b4fc",
+};
+
+/** Resolve the accent to use for a given surface (brightened on dark). */
+export function accentForSurface(accent: string, dark: boolean): string {
+  if (!dark) return accent;
+  return DARK_ACCENT[accent.toLowerCase()] || accent;
+}
+
+/**
+ * Two-tone name: first name in ink, remaining names in the accent color.
+ * "Ruthnie <span>Benoit</span>." Instant identity. (Lesson #3.)
+ *
+ * `enabled` (default true) is the per-signature `twoToneName` toggle — when
+ * false the whole name renders in ink (the restrained single-color look).
+ */
+export function nameTwoTone(
+  fullName: string,
+  accent: string,
+  ink: string,
+  enabled = true,
+): string {
+  const parts = (fullName || "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) return "";
+  if (!enabled || parts.length === 1) return `<span style="color:${ink};">${parts.join(" ")}</span>`;
+  const first = parts[0];
+  const rest = parts.slice(1).join(" ");
+  return `<span style="color:${ink};">${first}</span> <span style="color:${accent};">${rest}</span>`;
+}
+
+/**
+ * The visual anchor, resolved logo → photo → monogram (Lesson #5 — the logo is
+ * the STAR, monogram the fallback). `variant` controls the crop:
+ *  - "circle": round photo / round-ish monogram (the classic avatar)
+ *  - "square": edge-to-edge square photo (Full-Bleed)
+ *  - "logoFill": on logo mode, a solid accent panel with the white-padded logo
+ *    centered (used by Full-Bleed's colored panel).
+ */
+export function resolveAnchor(
+  data: SignatureData,
+  accent: string,
+  opts: {
+    size?: number;
+    variant?: "circle" | "square";
+    ring?: string;
+    logoHeight?: number;
+    monogramTextColor?: string;
+  } = {},
+): string {
+  const size = opts.size ?? 72;
+  const variant = opts.variant ?? "circle";
+  const logo = getResolvedLogo(data);
+  const photo = data.profileImageDataUrl;
+  if (logo) {
+    return logoImg(logo, data.company || data.fullName, {
+      height: opts.logoHeight ?? Math.round(size * 0.7),
+      radius: 10,
+    });
+  }
+  if (photo) {
+    if (variant === "square") {
+      return `<img src="${photo}" alt="${data.fullName}" width="${size}" height="${size}" style="display:block;" />`;
+    }
+    const ring = opts.ring ? `border:3px solid ${opts.ring};` : "";
+    return `<img src="${photo}" alt="${data.fullName}" width="${size}" height="${size}" style="display:block;border-radius:${Math.round(size / 2)}px;${ring}" />`;
+  }
+  const radius = variant === "square" ? 12 : Math.round(size / 2);
+  return monogramTile(data.fullName, {
+    size,
+    color: accent,
+    radius,
+    textColor: opts.monogramTextColor,
+  });
+}
+
+/** True when the resolved anchor will be a logo (used to decide colored-panel modes). */
+export function hasLogo(data: SignatureData): boolean {
+  return Boolean(getResolvedLogo(data));
+}
+
+/**
+ * A small anchor sized to sit ON a saturated accent band (Stacked Bands' top
+ * band). Photo gets a white ring; a logo gets a white pad; a monogram renders
+ * as white initials (no tile — it's already on the color). Returns "" only if
+ * there is genuinely nothing (never — the monogram always renders).
+ */
+export function headshotOrLogoBadge(
+  data: SignatureData,
+  accent: string,
+  size: number,
+): string {
+  const logo = getResolvedLogo(data);
+  const photo = data.profileImageDataUrl;
+  if (logo) return logoImg(logo, data.company || data.fullName, { height: Math.round(size * 0.55), radius: 6 });
+  if (photo) {
+    return `<img src="${photo}" alt="${data.fullName}" width="${size}" height="${size}" style="display:block;border-radius:${Math.round(size / 2)}px;border:2px solid #ffffff;" />`;
+  }
+  // Monogram already on color: white outline circle, no fill.
+  void accent;
+  const ini = initials(data.fullName);
+  return `<div style="display:inline-block;width:${size}px;height:${size}px;line-height:${size - 4}px;text-align:center;border:2px solid rgba(255,255,255,.85);border-radius:${Math.round(size / 2)}px;color:#ffffff;font-family:${fontStack};font-size:${Math.round(size * 0.38)}px;font-weight:700;">${ini}</div>`;
+}
+
+type ContactRowsOpts = {
+  color: string;
+  iconColor: string;
+  fontSize?: number;
+  align?: "left" | "right";
+  includeAddress?: boolean;
+  rowGap?: number;
+};
+
+/**
+ * Contact rows laid as an icon + value table, like `contactGrid`, but with full
+ * control over alignment (right-aligned wings), gap, and colors — so the
+ * structural templates can place contact wherever the layout demands. On
+ * `align:"right"` the value sits BEFORE the icon so the column reads inward
+ * toward a centered identity (the Wings layout).
+ */
+export function contactRows(data: SignatureData, opts: ContactRowsOpts): string {
+  const { color, iconColor } = opts;
+  const fontSize = opts.fontSize ?? 12;
+  const align = opts.align ?? "left";
+  const includeAddress = opts.includeAddress ?? true;
+  const iconSize = Math.max(13, Math.round(fontSize * 1.1));
+  const gap = opts.rowGap ?? 7;
+  const rows: { icon: ContactIconKey; value: string }[] = [];
+  if (data.email) rows.push({ icon: "email", value: emailLink(data.email, `color:${color};`) });
+  if (data.phone) rows.push({ icon: "phone", value: telLink(data.phone, `color:${color};`) });
+  if (data.website) rows.push({ icon: "web", value: link(data.website, data.website, `color:${color};`) });
+  if (includeAddress && data.address) rows.push({ icon: "address", value: data.address });
+  if (!rows.length) return "";
+  const body = rows
+    .map((r, i) => {
+      const last = i === rows.length - 1;
+      const pb = last ? 0 : gap;
+      const valCell = `<td style="color:${color};font-family:${fontStack};font-size:${fontSize}px;white-space:nowrap;vertical-align:middle;padding-bottom:${pb}px;${align === "right" ? "padding-right:8px;" : ""}">${r.value}</td>`;
+      const iconCell = `<td style="line-height:0;vertical-align:middle;padding-bottom:${pb}px;${align === "right" ? "" : "padding-right:8px;"}">${contactIcon(r.icon, iconColor, iconSize)}</td>`;
+      return align === "right" ? `<tr>${valCell}${iconCell}</tr>` : `<tr>${iconCell}${valCell}</tr>`;
+    })
+    .join("");
+  const tableStyle = align === "right" ? "margin-left:auto;" : "";
+  return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;${tableStyle}">${body}</table>`;
 }

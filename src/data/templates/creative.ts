@@ -1,103 +1,55 @@
 import type { SignatureTemplate } from "@/types/template";
 import {
   contactGrid,
-  ctaButton,
+  contactRows,
   fontStack,
   hairline,
+  initials,
   join,
-  monogramTile,
+  LIGHT_SURFACE,
+  nameTwoTone,
+  serifStack,
   socialIconsRow,
-  stackGroups,
-  twoColLeftRight,
 } from "@/utils/renderSignatureHtml";
 import { renderDefaultPlainText } from "@/utils/renderPlainText";
 
-// 1. Friendly Creator — warm two-column, avatar + tagline, grouped contact.
-const friendlyCreator: SignatureTemplate = {
-  id: "creative-friendly-creator",
-  name: "Friendly Creator",
-  category: "creative",
-  tags: ["friendly", "creator", "warm"],
-  description: "A warm, balanced layout with a circular avatar, a tagline, and a clean contact block.",
-  supportsImage: true,
-  supportsLogo: false,
-  supportsSocialLinks: true,
-  layoutType: "two-column",
-  renderHtml: (d) => {
-    const accent = d.accentColor || "#ec4899";
-    const profile = d.profileImageDataUrl;
-    const left = profile
-      ? `<img src="${profile}" alt="${d.fullName}" width="68" height="68" style="border-radius:50%;display:block;border:2px solid ${accent};" />`
-      : monogramTile(d.fullName, { size: 68, color: accent, radius: 34 });
-    const identity = `<div>
-        <div style="font-size:16px;font-weight:700;color:#1a1f2e;">Hi, I'm ${d.fullName}</div>
-        ${d.jobTitle || d.company ? `<div style="color:#5b6478;font-size:12px;margin-top:2px;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
-        ${d.tagline ? `<div style="color:${accent};font-size:13px;font-weight:600;margin-top:6px;line-height:1.4;">${d.tagline}</div>` : ""}
-      </div>`;
-    const social = socialIconsRow(d, { color: accent, size: 16, variant: "chip" });
-    const right = `<div style="font-family:${fontStack};">${stackGroups([identity, contactGrid(d, { iconColor: accent, fontSize: 12 }), social], 12)}</div>`;
-    return twoColLeftRight(left, right, { leftWidth: 68, gap: 18, valign: "middle" });
-  },
-  renderPlainText: renderDefaultPlainText,
-};
+const T = LIGHT_SURFACE;
 
-// 2. Personal Brand — personality-forward, tagline + pill CTA, grouped.
-const personalBrand: SignatureTemplate = {
-  id: "creative-personal-brand",
-  name: "Personal Brand",
+// 1. Giant Monogram — the initials blown up to 104px as a serif graphic block,
+// not a tiny avatar. Works with zero photo — the monogram IS the logo. Replaces
+// the weak modern-monogram-tile.
+const giantMonogram: SignatureTemplate = {
+  id: "creative-giant-monogram",
+  name: "Giant Monogram",
   category: "creative",
-  tags: ["personal", "brand", "creator"],
-  description: "Personality-forward two-column with a tagline and a pill CTA.",
-  supportsImage: true,
-  supportsLogo: false,
-  supportsSocialLinks: true,
-  layoutType: "two-column",
-  renderHtml: (d) => {
-    const accent = d.accentColor || "#a855f7";
-    const profile = d.profileImageDataUrl;
-    const left = profile
-      ? `<img src="${profile}" alt="${d.fullName}" width="68" height="68" style="border-radius:50%;display:block;" />`
-      : monogramTile(d.fullName, { size: 68, color: accent, radius: 34 });
-    const identity = `<div>
-        <div style="font-size:17px;font-weight:700;color:${accent};line-height:1.2;">${d.fullName}</div>
-        ${d.jobTitle || d.company ? `<div style="color:#5b6478;font-size:12px;margin-top:2px;">${join([d.jobTitle, d.company], " · ")}</div>` : ""}
-        ${d.tagline ? `<div style="font-style:italic;color:#1a1f2e;font-size:13px;margin-top:6px;line-height:1.4;">${d.tagline}</div>` : ""}
-      </div>`;
-    const social = socialIconsRow(d, { color: accent, size: 16, variant: "chip" });
-    const cta = ctaButton(d, { color: accent, radius: 999 });
-    const right = `<div style="font-family:${fontStack};">${stackGroups([identity, contactGrid(d, { iconColor: accent, fontSize: 12 }), social, cta], 12)}</div>`;
-    return twoColLeftRight(left, right, { leftWidth: 68, gap: 18, valign: "top" });
-  },
-  renderPlainText: renderDefaultPlainText,
-};
-
-// 3. Portfolio Style — website/portfolio CTA leads, with rhythm.
-const portfolio: SignatureTemplate = {
-  id: "creative-portfolio",
-  name: "Portfolio Style",
-  category: "creative",
-  tags: ["portfolio", "designer"],
-  description: "Leads with a bold portfolio CTA, with a grouped contact block below.",
+  tags: ["monogram", "initials", "graphic", "image-free"],
+  description: "Initials blown up to a serif graphic block — the monogram becomes the whole logo. No photo needed.",
   supportsImage: false,
-  supportsLogo: true,
+  supportsLogo: false,
   supportsSocialLinks: true,
-  layoutType: "stacked",
+  layoutType: "two-column",
   renderHtml: (d) => {
-    const accent = d.accentColor || "#f59e0b";
-    const identity = `<div>
-        <div style="font-size:16px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
-        ${d.jobTitle ? `<div style="color:#5b6478;font-size:12px;margin-top:2px;">${d.jobTitle}</div>` : ""}
+    const accent = d.accentColor || "#4f46e5";
+    const mono = `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:separate;width:104px;height:104px;background:${accent};border-radius:16px;"><tr><td style="width:104px;height:104px;text-align:center;vertical-align:middle;font-family:${serifStack};font-size:46px;font-weight:700;color:#fff;letter-spacing:1px;">${initials(d.fullName)}</td></tr></table>`;
+    const social = socialIconsRow(d, { variant: "brand", size: 16, gap: 5 });
+    const right = `<div style="font-family:${fontStack};">
+        <div style="font-size:19px;font-weight:800;letter-spacing:-.3px;">${nameTwoTone(d.fullName, accent, T.ink, d.twoToneName)}</div>
+        ${d.jobTitle || d.company ? `<div style="font-size:12px;color:${T.sub};font-weight:600;margin:3px 0 11px;">${join([d.jobTitle, d.company], " · ")}</div>` : '<div style="height:11px;"></div>'}
+        ${contactRows(d, { color: T.sub, iconColor: accent, fontSize: 12, rowGap: 6 })}
+        ${social ? `<div style="margin-top:11px;">${social}</div>` : ""}
       </div>`;
-    const cta = d.website
-      ? `<a href="${d.website.startsWith("http") ? d.website : "https://" + d.website}" style="display:inline-block;background:${accent};color:#ffffff;font-weight:700;font-size:12px;padding:8px 16px;border-radius:6px;text-decoration:none;">${d.ctaLabel || "View Portfolio"} &rarr;</a>`
-      : "";
-    const social = socialIconsRow(d, { color: accent, size: 16, variant: "chip" });
-    return `<div style="font-family:${fontStack};">${stackGroups([identity, cta, contactGrid(d, { iconColor: accent, fontSize: 12, includeAddress: false }), social], 12)}</div>`;
+    return `<table cellpadding="0" cellspacing="0" border="0" role="presentation" style="border-collapse:collapse;">
+      <tr>
+        <td style="vertical-align:middle;padding-right:20px;line-height:0;">${mono}</td>
+        <td style="vertical-align:middle;">${right}</td>
+      </tr>
+    </table>`;
   },
   renderPlainText: renderDefaultPlainText,
 };
 
-// 4. Script Sign-Off — cursive sign-off, a measured rule, then grouped details.
+// 2. Script Sign-Off — KEEP. A cursive sign-off above a measured rule, then
+// grouped details. Genuinely distinct — personal and warm.
 const scriptSignOff: SignatureTemplate = {
   id: "creative-script-sign-off",
   name: "Script Sign-Off",
@@ -110,23 +62,20 @@ const scriptSignOff: SignatureTemplate = {
   layoutType: "stacked",
   renderHtml: (d) => {
     const accent = d.accentColor || "#a855f7";
-    const signOff = `<div style="font-family:'Brush Script MT','Lucida Handwriting',cursive;font-size:30px;color:${accent};line-height:1;">— ${d.fullName.split(" ")[0] || d.fullName}</div>`;
+    const firstName = d.fullName.split(" ")[0] || d.fullName;
+    const signOff = `<div style="font-family:'Brush Script MT','Lucida Handwriting',cursive;font-size:30px;color:${accent};line-height:1;">— ${firstName}</div>`;
     const identity = `<div>
-        <div style="font-size:14px;font-weight:700;color:#1a1f2e;">${d.fullName}</div>
-        ${d.jobTitle || d.company ? `<div style="color:#5b6478;font-size:12px;margin-top:2px;">${join([d.jobTitle, d.company], ", ")}</div>` : ""}
+        <div style="font-size:14px;font-weight:800;letter-spacing:-.1px;">${nameTwoTone(d.fullName, accent, T.ink, d.twoToneName)}</div>
+        ${d.jobTitle || d.company ? `<div style="color:${T.sub};font-size:12px;margin-top:2px;">${join([d.jobTitle, d.company], ", ")}</div>` : ""}
       </div>`;
     return `<div style="font-family:${fontStack};">
       ${signOff}
-      ${hairline({ color: "#e6e8ee", width: 120, spaceAbove: 12, spaceBelow: 12 })}
-      ${stackGroups([identity, contactGrid(d, { iconColor: accent, fontSize: 12 })], 12)}
+      ${hairline({ color: T.rule, width: 120, spaceAbove: 12, spaceBelow: 12 })}
+      <div>${identity}</div>
+      <div style="margin-top:12px;">${contactGrid(d, { iconColor: accent, fontSize: 12 })}</div>
     </div>`;
   },
   renderPlainText: renderDefaultPlainText,
 };
 
-export const creativeTemplates: SignatureTemplate[] = [
-  friendlyCreator,
-  personalBrand,
-  portfolio,
-  scriptSignOff,
-];
+export const creativeTemplates: SignatureTemplate[] = [giantMonogram, scriptSignOff];
