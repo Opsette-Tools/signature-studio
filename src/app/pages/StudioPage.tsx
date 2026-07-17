@@ -1,8 +1,9 @@
 import { AppstoreOutlined, CopyOutlined, EyeOutlined } from "@ant-design/icons";
-import { Drawer, Grid, Segmented } from "antd";
-import { useState } from "react";
+import { App as AntApp, Drawer, Grid, Segmented } from "antd";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CopyPanel } from "@/components/signature/CopyPanel";
 import { DemoBanner } from "@/components/signature/DemoBanner";
+import { EmbedSaveBar } from "@/components/signature/EmbedSaveBar";
 import { SavedSignatures } from "@/components/signature/SavedSignatures";
 import { SignatureForm } from "@/components/signature/SignatureForm";
 import { SignaturePreview, type PreviewCanvas } from "@/components/signature/SignaturePreview";
@@ -12,6 +13,13 @@ import { TemplateStrip } from "@/components/signature/TemplateStrip";
 import { SectionCard } from "@/components/ui/SectionCard";
 import { useFavorites } from "@/hooks/useFavorites";
 import { useSignatureContext } from "@/app/SignatureContext";
+import { fromKitJson, toKitJson } from "@/utils/brandKit";
+import {
+  isEmbedded,
+  isTrustedEmbedMessage,
+  embedSave,
+  OPSETTE_TOOLS_ORIGIN,
+} from "@/utils/opsette-kit-link";
 
 const initialFilters: FilterState = {
   query: "",
@@ -39,6 +47,71 @@ export function StudioPage() {
   const [copyOpen, setCopyOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>(initialFilters);
   const [canvas, setCanvas] = useState<PreviewCanvas>("light");
+  const { message } = AntApp.useApp();
+
+  // ── Mechanism 3: running inside a Brand Board iframe ──────────────────────
+  const embedded = useMemo(() => isEmbedded(), []);
+  const trustedParentOrigins = useMemo(
+    () => (import.meta.env.DEV ? [window.location.origin, "http://localhost:8124"] : []),
+    [],
+  );
+  const [saving, setSaving] = useState(false);
+
+  // Inbound: the parent hands us the current signature blob to revise. Restore
+  // via the same context setters the reopen path uses — WITHOUT the router
+  // navigate() the reopen modal does (surprising inside an iframe). Origin-checked.
+  //
+  // CRITICAL: this effect must bind exactly ONCE. `setSelectedTemplateId` (and
+  // potentially `replaceAll`) are recreated every render by the context, so
+  // depending on them would re-run this effect → re-post `ready` → the parent
+  // re-sends `load` → resets state → re-render → an infinite load loop (the
+  // "preview twitches, can't pick a template" bug). We stash the handler in a ref
+  // and depend only on the stable embed flags, so `ready` fires once and a
+  // template pick sticks.
+  const applyLoadRef = useRef<(raw: string) => void>(() => {});
+  applyLoadRef.current = (raw: string) => {
+    const reopened = fromKitJson(raw);
+    if (reopened) {
+      replaceAll(reopened.signature);
+      setSelectedTemplateId(reopened.templateId);
+    }
+  };
+  // Only apply the FIRST load the parent sends. Later re-sends (e.g. if the
+  // parent re-emits) must not clobber edits in progress inside the frame.
+  const loadedOnceRef = useRef(false);
+  useEffect(() => {
+    if (!embedded) return;
+    const onMessage = (event: MessageEvent) => {
+      if (!isTrustedEmbedMessage(event, trustedParentOrigins)) return;
+      if (event.data.kind === "load" && typeof event.data.payload === "string") {
+        if (loadedOnceRef.current) return;
+        loadedOnceRef.current = true;
+        applyLoadRef.current(event.data.payload);
+      }
+    };
+    window.addEventListener("message", onMessage);
+    window.parent.postMessage({ source: "opsette-embed", kind: "ready" }, "*");
+    return () => window.removeEventListener("message", onMessage);
+  }, [embedded, trustedParentOrigins]);
+
+  // Outbound: build the same blob "Export to Brand Board" produces and post it up.
+  const saveToBrandBoard = () => {
+    if (!selectedTemplate) {
+      message.error("Pick a template first.");
+      return;
+    }
+    setSaving(true);
+    try {
+      const payload = toKitJson(selectedTemplate, data);
+      const targetOrigin = import.meta.env.DEV ? "*" : OPSETTE_TOOLS_ORIGIN;
+      window.parent.postMessage(embedSave(JSON.stringify(payload)), targetOrigin);
+      message.success("Updated in Brand Board");
+    } catch {
+      message.error("Couldn't send the signature back — try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   const canvasToggle = (
     <Segmented
@@ -80,6 +153,13 @@ export function StudioPage() {
 
   return (
     <div className="studio">
+      {embedded && (
+        <EmbedSaveBar
+          onSave={saveToBrandBoard}
+          saving={saving}
+          disabled={!selectedTemplate}
+        />
+      )}
       <DemoBanner />
       <TemplateStrip
         data={data}
@@ -109,6 +189,11 @@ export function StudioPage() {
             {previewBlock}
             {copyBlock}
           </div>
+        ) : embedded ? (
+          // Embedded but narrow: still show the preview inline so the user sees
+          // the signature they're editing (the copy panel is replaced by the
+          // embed save bar, so it's intentionally omitted here).
+          <div className="studio__right stack">{previewBlock}</div>
         ) : null}
       </div>
 
