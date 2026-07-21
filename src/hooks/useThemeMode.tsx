@@ -1,10 +1,16 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 import { readString, storageKeys, writeString } from "@/utils/storage";
+import { isEmbedded } from "@/utils/opsette-kit-link";
 
 export type ThemeMode = "light" | "dark";
 
 function detectInitial(): ThemeMode {
+  // Inside a Brand Board iframe (?embed=1) the app's header — and with it the
+  // light/dark toggle — is hidden, so a dark boot would be un-escapable. A
+  // signature also always renders onto a light Brand Board surface. Force light
+  // when embedded, ignoring both the stored preference and the OS setting.
+  if (isEmbedded()) return "light";
   const stored = readString(storageKeys.theme);
   if (stored === "light" || stored === "dark") return stored;
   if (typeof window !== "undefined" && window.matchMedia?.("(prefers-color-scheme: dark)").matches) {
@@ -37,7 +43,9 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", mode);
-    writeString(storageKeys.theme, mode);
+    // Don't persist the forced-light embed value — it would overwrite the user's
+    // own preference the next time they open the tool standalone.
+    if (!isEmbedded()) writeString(storageKeys.theme, mode);
   }, [mode]);
 
   const toggle = useCallback(() => {
